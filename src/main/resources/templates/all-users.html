@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+
+<th:block th:replace="~{header-fragment :: common-head('Все пользователи')}"></th:block>
+
+<body>
+<div class="container">
+    <div th:if="${accessDeniedMessage}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <span th:text="${accessDeniedMessage}">У вас нет прав для выполнения этого действия.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+    </div>
+    <h2 class="mt-5 d-flex justify-content-between">
+        Пользователи
+        <div class="d-flex gap-1">
+            <div>
+                <form th:action="@{/users/{userId}(userId=${authUserId})}" method="get">
+                    <button type="submit" class="btn btn-light">Моя страница</button>
+                </form>
+            </div>
+        </div>
+    </h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Имя пользователя</th>
+            <th scope="col">Ник пользователя</th>
+            <th scope="col">Электронная почта</th>
+            <th scope="col">Роль</th>
+            <th scope="col">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.firstName() + ' ' + user.middleName() + ' ' + user.lastName()}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.role}"></td>
+            <td>
+                <div class="d-flex gap-1">
+                    <form th:action="@{/users/edit_form/{userId}(userId=${user.userId()})}" method="get"
+                          th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
+                        <button type="submit" class="btn btn-secondary">Редактировать</button>
+                    </form>
+                    <form th:action="@{/users/delete/{userId}(userId=${user.userId()})}" method="post"
+                          th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')') and user.userId() != authUserId}">
+                        <button type="submit" class="btn btn-secondary">Удалить</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

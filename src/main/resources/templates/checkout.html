@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic&amp;display=swap">
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
+    <title>Оформление заказа</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@cdek-it/widget@3" charset="utf-8"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-door-open"></i> В магазин...
+        </a>
+        <div class="ml-auto">
+            <a href="/cart" class="btn btn-outline-primary" id="cart-button">
+                <i class="bi bi-cart"></i> Корзина (<span id="cart-count">0</span>) — <span id="cart-total">0</span> ₽
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2>Оформление заказа</h2>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}">Ошибка</span>
+    </div>
+    <form id="checkout-form" th:action="@{/orders}" method="post" th:object="${order}" novalidate>
+        <div class="mb-3">
+            <label for="customerName" class="form-label">Имя</label>
+            <input type="text" class="form-control" id="customerName" th:field="*{firstName}">
+        </div>
+        <div th:if="${#fields.hasErrors('firstName')}" class="alert alert-danger" role="alert">
+            <span th:text="${#fields.errors('firstName')[0]}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="customerMiddleName" class="form-label">Очество</label>
+            <input type="text" class="form-control" id="customerMiddleName" th:field="*{middleName}">
+        </div>
+
+        <div class="mb-3">
+            <label for="customerLastName" class="form-label">Фамилия</label>
+            <input type="text" class="form-control" id="customerLastName" th:field="*{lastName}">
+        </div>
+        <div th:if="${#fields.hasErrors('lastName')}" class="alert alert-danger" role="alert">
+            <span th:text="${#fields.errors('lastName')[0]}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="customerPhone" class="form-label">Телефон</label>
+<!--            <input type="text" name="customerPhone" id="customerPhone" class="form-control" th:field="*{customerPhone}"/>-->
+            <input type="text" id="customerPhone" name="customerPhone" class="form-control" th:field="*{customerPhone}" required>
+        </div>
+        <div th:if="${#fields.hasErrors('customerPhone')}" class="alert alert-danger" role="alert">
+            <span th:text="${#fields.errors('customerPhone')[0]}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="customerEmail" class="form-label">Электронная почта</label>
+            <input type="text" class="form-control" id="customerEmail" th:field="*{customerEmail}">
+        </div>
+        <div th:if="${#fields.hasErrors('customerEmail')}" class="alert alert-danger" role="alert">
+            <span th:text="${#fields.errors('customerEmail')[0]}"></span>
+        </div>
+
+        <input type="hidden" class="form-check-label" id="orderStatus" th:field="*{orderStatus}"/>
+        <input type="hidden" class="form-check-label" id="payment" th:field="*{payment}"/>
+        <input type="hidden" id="deliveryAddress" name="deliveryAddress" th:field="*{deliveryAddress}"/>
+        <input type="hidden" id="deliveryType" name="deliveryType" th:field="*{deliveryType}"/>
+        <input type="hidden" id="orderItemsInput" name="orderItemsData"/>
+
+        <input type="hidden" id="productAmount" name="productAmount" th:field="*{productAmount}"/>
+        <input type="hidden" id="deliveryAmount" name="deliveryAmount" th:field="*{deliveryAmount}"/>
+        <input type="hidden" id="totalOrderAmount" name="totalOrderAmount" th:field="*{totalOrderAmount}"/>
+
+        <div class="alert alert-info" role="alert">
+            Оплата производится через сервис онлайн платежей Ю-Касса. Доступна только предоплата.
+        </div>
+
+        <h4 class="text mt-4">Выбор способа доставки</h4>
+        <div id="cdek-map" style="width:800px;height:600px;"></div>
+
+        <p>Стоимость товаров: <span id="product-total">0</span> руб.</p>
+        <div th:if="${#fields.hasErrors('productAmount')}" class="alert alert-danger" role="alert">
+            <span th:text="${#fields.errors('productAmount')[0]}"></span>
+        </div>
+        <p>Стоимость доставки: <span id="delivery-cost">0</span> руб.</p>
+        <div th:if="${#fields.hasErrors('deliveryAmount')}" class="alert alert-danger" role="alert">
+            <span th:text="${#fields.errors('deliveryAmount')[0]}"></span>
+        </div>
+        <p><strong id="total-price">Общая стоимость заказа с доставкой: 0 рублей.</strong></p>
+        <div th:if="${#fields.hasErrors('totalOrderAmount')}" class="alert alert-danger" role="alert">
+            <span th:text="${#fields.errors('totalOrderAmount')[0]}"></span>
+        </div>
+
+        <div class="mb-3 mt-4">
+            <button type="submit" id="checkout-btn" class="btn btn-success" style="color: white;">Перейти к оплате</button>
+        </div>
+    </form>
+</div>
+<script src="/assets/bootstrap/js/delivery-control.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
+<script src="/assets/bootstrap/js/cart-update-for-checkout.js"></script>
+<script src="/assets/bootstrap/js/customer-phone-mask.js"></script>
+</body>
+</html>

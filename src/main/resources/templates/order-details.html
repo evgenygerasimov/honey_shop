@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{header-fragment :: common-head('Детали заказа')}"></th:block>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary mb-4">Детали заказа</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="fw-bold">Основная информация</h5>
+                <p><strong>Дата и время заказа:</strong> <span th:text="${#temporals.format(order.createDate, 'yyyy-MM-dd')}"/> / <span th:text="${#temporals.format(order.createDate, 'HH:mm:ss')}"></span><span ></span></p>
+                <p><strong>Номер заказа:</strong> <span th:text="${order.orderId}"></span></p>
+                <p><strong>ФИО :</strong> <span th:text="${order.fullName}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${order.customerEmail}"></span></p>
+                <p><strong>Телефон:</strong> <span th:text="${order.customerPhone}"></span></p>
+                <p><strong>Адрес доставки:</strong> <span th:text="${order.deliveryAddress}"></span></p>
+            </div>
+
+            <div class="col-md-6">
+                <h5 class="fw-bold">Оплата и доставка</h5>
+                <p><strong>Тип доставки:</strong> <span th:text="${order.deliveryType}"></span></p>
+                <p><strong>Статус заказа:</strong> <span th:text="${order.orderStatus}"></span></p>
+                <p><strong>Статус оплаты:</strong> <span th:text="${order.paymentStatus}"></span></p>
+                <p><strong>Сумма товаров:</strong> <span th:text="${order.productAmount}"></span> руб.</p>
+                <p><strong>Доставка:</strong> <span th:text="${order.deliveryAmount}"></span> руб.</p>
+                <p><strong class="fs-5 text-danger">Итого:</strong> <span th:text="${order.totalOrderAmount}"></span> руб.</p>
+            </div>
+        </div>
+
+        <h4 class="mt-4">Товары в заказе</h4>
+        <table class="table table-striped table-hover border">
+            <thead class="table-dark">
+            <tr>
+                <th>Название товара</th>
+                <th>Количество</th>
+                <th>Цена за единицу</th>
+                <th>Сумма</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${order.orderItems}">
+                <td th:text="${productsMap[item.product.productId].name}"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${item.pricePerUnit} + ' руб.'"></td>
+                <td th:text="${item.quantity * item.pricePerUnit} + ' руб.'"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="text-center">
+            <a href="/orders" class="btn btn-primary mt-3">К заказам</a>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

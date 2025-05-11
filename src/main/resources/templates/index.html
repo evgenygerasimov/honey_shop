@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{header-fragment :: common-head('ПХ Пасека')}"></th:block>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-md bg-body py-3">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#store">
+            <i class="la la-forumbee me-2" style="font-size: 36px;"></i>
+            <span>ПХ Пасека</span>
+        </a>
+        <div class="collapse navbar-collapse" id="navcol-1">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="#about-us">О нас</a></li>
+                <li class="nav-item"><a class="nav-link" href="#catalog">Каталог</a></li>
+                <li class="nav-item"><a class="nav-link" href="#delivery">Доставка</a></li>
+                <li class="nav-item"><a class="nav-link" href="#footer">Контакты</a></li>
+            </ul>
+            <a href="/cart" class="btn btn-outline-primary" id="cart-button">
+                <i class="bi bi-cart"></i>
+                Корзина (<span id="cart-count">0</span>) — <span id="cart-total">0</span> ₽
+            </a>
+        </div>
+    </div>
+</nav>
+<div id="store">
+    <section class="py-4 py-xl-5" style="margin-bottom: 150px;">
+        <div class="container">
+            <div class="row g-0">
+                <div class="col-md-6" style="background: var(--bs-body-bg);">
+                    <div class="text-white" style="background: var(--bs-body-bg); ">
+                        <h2 class="fw-bold text-black mb-3"><strong>Пчеловодное хозяйство "Пасека"</strong></h2>
+                        <p class="text-dark mb-4"><strong>Ваш любимый&nbsp; магазин натурального мёда</strong></p>
+                        <div class="my-3">
+                            <a class="btn btn-primary btn-lg me-2" role="button" href="#catalog"
+                               style="background: #f8d108; border: none;">В каталог</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 order-first order-md-last" style="min-height: 250px;"><img
+                        class="w-100 h-100 fit-cover" src="/assets/img/photo_2023-11-11_15-56-12.jpg"
+                        style="transform-origin: center;background: repeating-linear-gradient(-92deg, var(--bs-secondary-color) 10%, white 100%), var(--bs-btn-disabled-color);border-color: var(--bs-body-bg);">
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div id="catalog">
+    <section class="text-center bg-light features-icons" style="margin-bottom: 150px;">
+        <div class="container"><h1>Каталог</h1></div>
+        <div class="container">
+            <div class="card-group" style="border-radius: 0;border-width: 0;">
+                <div class="card" style="border-width: 0;">
+                    <img class="card-img-top w-100 d-block" src="/assets/img/IMG_2900.jpg">
+                    <div class="card-body text-center">
+                        <a class="btn btn-primary link-dark" href="#Гречишный"
+                           style="color: var(--bs-body-bg); background: rgba(0,123,255,0); border-style: none;">
+                            <h2>Гречишный мед</h2>
+                        </a>
+                    </div>
+                </div>
+                <div class="card" style="border-width: 0;">
+                    <img class="card-img-top w-100 d-block" src="/assets/img/IMG_2902.jpg">
+                    <div class="card-body text-center">
+                        <a class="btn btn-primary link-dark" href="#Разнотравье"
+                           style="color: var(--bs-body-bg); background: rgba(0,123,255,0); border-style: none;">
+                            <h2>Разнотравный мед</h2>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<section style="margin-bottom: 150px;" th:each="entry : ${categorizedProducts}"
+         th:attr="id=${entry.key}">
+    <div class="container">
+        <h1 class="text-center" style="margin-bottom: 8px;" th:text="${entry.key}">Категория</h1>
+    </div>
+    <div class="container" style="margin-bottom: 150px;">
+        <div class="card-group">
+            <div class="card" th:each="product : ${entry.value}" th:attr="data-product-id=${product.productId}">
+                <th:block th:if="${not #lists.isEmpty(product.images)}">
+                    <img th:src="@{'/app/uploads/img/' + ${#strings.substring(product.images[0], product.images[0].lastIndexOf('/') + 1)}}"
+                         alt="Product Image"
+                         width="350"
+                         data-bs-toggle="modal" th:attr="data-bs-target='#productModal' + ${product.productId}">
+                </th:block>
+                <th:block th:unless="${not #lists.isEmpty(product.images)}">
+                    <span>Нет изображения</span>
+                </th:block>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                    <p class="card-text" th:text="${product.shortDescription}">Product Description</p>
+                    <span class="product-price" th:text="'Цена: ' + ${product.price}">Price</span>
+                    <input type="hidden" id="product-weight" name="product-weight" th:value="${product.weight}"/>
+                    <input type="hidden" id="product-width" name="product-width" th:value="${product.width}"/>
+                    <input type="hidden" id="product-height" name="product-height" th:value="${product.height}"/>
+                    <input type="hidden" id="product-length" name="product-length" th:value="${product.length}"/>
+
+                    <div class="d-flex align-items-center my-3">
+                        <button class="btn btn-outline-secondary decreaseBtn" type="button">-</button>
+                        <label>
+                            <input type="number" class="form-control quantityInput mx-2" value="1" min="1" max="100"
+                                   step="1" style="width: 70px;">
+                        </label>
+                        <button class="btn btn-outline-secondary increaseBtn" type="button">+</button>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <button class="btn btn-success" style="color: white;" onclick="showNotification()">В корзину
+                        </button>
+                        <a th:href="@{/products/{id}(id=${product.productId})}"
+                           class="ms-3 text-decoration-none fw-semibold" style="color: black;">Подробнее...</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="emptyCartNotification"
+     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background-color: orange; color: white;
+            border-radius: 8px; display: none;
+            max-width: 90%; width: max-content;
+            word-wrap: break-word; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    Ваша корзина пуста. Пожалуйста, добавьте товары в корзину.
+</div>
+
+<div id="addToCartNotification"
+     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background-color: green; color: white;
+            border-radius: 8px; display: none;
+            max-width: 90%; width: max-content;
+            word-wrap: break-word; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    Товар добавлен в корзину!
+</div>
+
+
+<div class="container">
+    <section class="showcase" style="margin-bottom: 150px;">
+        <h2 class="text-center mb-5">Отзывы о магазине</h2>
+        <div class="container" style="margin-bottom: 100px;">
+            <div id="carouselReviews" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card"><img class="card-img w-100 d-block"
+                                                   src="/assets/img/man.png"
+                                                   width="210"
+                                                   height="280">
+                            </div>
+                            <p class="fs-5 fst-italic">"Отличный магазин! Быстрая доставка и хорошее качество
+                                товаров."</p>
+                            <h5 class="fw-bold">Иван Иванов</h5>
+                            <p class="text-warning">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card"><img class="card-img w-100 d-block"
+                                                   src="/assets/img/woman.png"
+                                                   width="210"
+                                                   height="280">
+                            </div>
+                            <p class="fs-5 fst-italic">"Товар полностью соответствует описанию. Рекомендую!"</p>
+                            <h5 class="fw-bold">Мария Петрова</h5>
+                            <p class="text-warning">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card"><img class="card-img w-100 d-block"
+                                                   src="/assets/img/man.png"
+                                                   width="210"
+                                                   height="280">
+                            </div>
+                            <p class="fs-5 fst-italic">"Приятный сервис, но доставка немного задержалась."</p>
+                            <h5 class="fw-bold">Алексей Сидоров</h5>
+                            <p class="text-warning">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselReviews"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselReviews"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div id="delivery">
+    <section style="margin-bottom: 150px;">
+        <div class="container"><h1 class="text-center">Доставка и оплата</h1></div>
+        <div class="container">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card p-4 text-center border-0">
+                            <i class="fas fa-truck fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Доставляем по всей стране и даже дальше</h5>
+                            <p>Доставляем по всей стране и даже дальше, чтобы каждый мог заказать товар с доставкой.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card p-4 text-center border-0">
+                            <i class="fas fa-check-circle fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Работаем только с проверенными ТК</h5>
+                            <p>Работаем только с проверенными транспортными компаниями, чтобы обеспечить быструю и
+                                безопасную доставку.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card p-4 text-center border-0">
+                            <i class="fas fa-home fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Доставим до двери или до терминала ТК</h5>
+                            <p>Выбирайте, как вам удобнее: доставка до двери или до терминала транспортной компании.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card p-4 text-center border-0">
+                            <i class="fas fa-credit-card fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Безопасная и удобная online оплата</h5>
+                            <p>Оплатите товар через безопасные онлайн-сервисы прямо на сайте.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card p-4 text-center border-0">
+                            <i class="fas fa-sync-alt fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Если товар испортят при перевозке - вернем деньги</h5>
+                            <p>В случае повреждения товара в процессе перевозки мы возместим вам стоимость товара.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card p-4 text-center border-0">
+                            <i class="fas fa-question-circle fa-3x mb-3"></i>
+                            <h5 class="fw-bold">Остались вопросы?</h5>
+                            <p>Свяжитесь с нами, и мы ответим на все ваши вопросы в кратчайшие сроки.</p>
+                            <a href="#footer" class="btn btn-warning text-white mt-3">
+                                Контактная информация
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+                  rel="stylesheet">
+        </div>
+    </section>
+</div>
+
+<div id="about-us" class="py-5 bg-light">
+    <section style="margin-bottom: 150px;">
+        <div class="container">
+            <h2 class="text-center mb-4">О нас</h2>
+            <div class="row">
+                <!-- Картинка -->
+                <div class="col-md-6 d-flex align-items-start">
+                    <div class="p-4 p-md-5">
+                        <img src="/assets/img/photo_2023-11-11_15-55-46.jpg" class="img-fluid rounded w-100"
+                             style="object-fit: cover; height: 800px;">
+                    </div>
+                </div>
+
+                <!-- Текст -->
+                <div class="col-md-6 d-flex align-items-start">
+                    <div class="p-4 p-md-5">
+                    <span class="fs-5 text-dark mb-0">
+                        Наше фермерское пчеловодное хозяйство существует уже более 10 лет.
+                        На сегодняшний день наша пасека насчитывает около двухсот пчелиных семей.
+                        Мы очень любим свое дело, поэтому дорожим своей репутацией.
+                        Наш мёд — это фермерский продукт из первых рук, без посредников.
+                        Это позволяет гарантировать 100% качество.<br><br>
+
+                        Мы не используем никакие химикаты при уходе за пчёлами.
+                        Все продукты хранятся при оптимальной температуре и влажности,
+                        чтобы сохранить их природные свойства. Наша пасека расположена вдали от промышленных зон —
+                        в экологически чистом районе, где пчёлы собирают нектар с лугов и лесов.<br><br>
+
+                        Мы предлагаем небольшой выбор сортов мёда, но каждый из них имеет свои уникальные свойства.
+                        Мы гордимся тем, что клиенты доверяют нам уже много лет и возвращаются снова и снова.<br><br>
+
+                        Если у Вас остались вопросы, вы можете связаться с нами любым удобным способом — мы всегда открыты для общения.
+                        Покупая у нас, вы поддерживаете не просто бизнес, а дело, в которое вложены душа и любовь к природе.
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<div class="container">
+    <section style="margin-bottom: 150px;">
+        <h1 class="text-center">Частые вопросы</h1>
+        <div class="container my-5">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Должен ли мед кристаллизоваться и почему?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                         data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Процесс кристаллизации присущ абсолютному большинству видов меда. Исключениями являются лишь
+                            каштановый и падьевые меда. Вопреки расхожему мнению, только этот процесс со 100%
+                            вероятностью указывает на то, что перед Вами настоящий и правильный мед. А вот сахар
+                            скормленный пчелам навсегда обречен остаться жидким "медом". Причина, почему мед
+                            кристаллизуется, кроется в том, что в его составе есть глюкоза. Именно она способствует
+                            процессу кристаллизации меда. Кроме глюкозы, в меду всегда есть фруктоза. Их соотношение
+                            влияет на время кристаллизации меда после откачки. Больше глюкозы, меньше фруктозы - быстрая
+                            кристаллизация. И наоборот.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            А кормите ли вы своих пчел сахаром?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                         data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Конечно же нет. Это не имеет совершенно никакого смысла. Ни с финансовой точки зрения, ни с
+                            практической. Нам намного проще перевозить наших пчел от медоноса к медоносу. Благодаря
+                            этому пчелиные семьи и себя обеспечивают кормом и нам достается натурального меда с
+                            избытком. Репутация зарабатывается долго. А потерять ее можно в один миг.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Почему у вас так мало сортов меда?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                         data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Все дело в том, что мы пчеловоды, а не перекупщики меда. И за хороший сезон, работая с
+                            пчелами собрать более 3-4 сортов меда не реальная задача. Так как очень узкие временные
+                            рамки цветения медоносов, да и само лето короткое. Так же сама медоносная база регионов
+                            очень ограничена. На нашей пасеке за сезон обычно собирается 2-3 сорта меда.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Почему мед относящийся к одному сорту различается по цвету и вкусу?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                         data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Все дело в том, что мед одного сорта, в одной партии, и даже в одной емкости промежуточного
+                            хранения может отличаться по цвету и консистенции. Пчелы это не завод по производству
+                            серийного товара, каждая пчелиная семья индивидуальна, по-разному работает на медоносах.
+                            Пчел невозможно заставить делать однотипный мед.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="container">
+    <section style="margin-bottom: 150px;">
+        <h1 class="text-center">Моменты из жизни пасеки</h1>
+        <div class="container d-flex flex-column align-items-center py-4 py-xl-5">
+            <div class="row gy-4 w-100" style="max-width: 800px;">
+
+                <div class="col-12">
+                    <a href="/assets/img/photo_2023-11-11_15-56-12.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2023-11-11_15-56-12.jpg">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2023-11-11_15-56-03.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2023-11-11_15-56-03.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2023-11-11_15-56-16.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2023-11-11_15-56-16.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2023-11-11_15-56-20.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2023-11-11_15-56-20.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2023-11-11_15-55-59.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2023-11-11_15-55-59.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2025-04-27_15-36-11.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2025-04-27_15-36-11.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2025-04-27_15-36-25.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2025-04-27_15-36-25.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2025-04-27_15-36-29.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2025-04-27_15-36-29.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <a href="/assets/img/photo_2025-04-27_15-36-35.jpg" class="glightbox" data-gallery="gallery1">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2025-04-27_15-36-35.jpg" width="210"
+                             height="280">
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<section style="margin-bottom: 150px;">
+    <div id="map" class="container">
+        <h1 class="text-center">Мы на карте</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="container">
+                    <div class="bg-dark border rounded border-0 border-dark overflow-hidden">
+                        <div class="row g-0">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d292.2815183148353!2d49.721136381203024!3d54.18005444019401!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sru!2sru!4v1741103548089!5m2!1sru!2sru"
+                                    width="600" height="600" style="border:0;" allowfullscreen=""
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section style="margin-bottom: 150px;">
+    <div id="emailForm" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <h1 class="text-center" style="margin-bottom: 40px;">Написать нам</h1>
+                    <form class="p-3" action="/contacts/send" method="post" id="contactForm">
+                        <div class="mb-3">
+                            <input class="form-control" type="text" id="name-1" name="name"
+                                   placeholder="Имя">
+                        </div>
+                        <div id="nameError" style="color: red; display: none;">Пожалуйста, введите имя. От 2 до 50
+                            символов.
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" type="text" id="email-1" name="email"
+                                   placeholder="Email">
+                            <div id="emailError" style="color: red; display: none;">Пожалуйста, введите
+                                email в формате mail@example.com.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" type="text" id="phone-1" name="phone"
+                                   placeholder="Номер телефона">
+                            <div id="phoneError" style="color: red; display: none;">Пожалуйста, введите
+                                номер телефона в формате +7(123)456-78-90.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                                            <textarea class="form-control" id="message-1" name="message" rows="6"
+                                                      placeholder="Сообщение"></textarea>
+                        </div>
+                        <div id="messageError" style="color: red; display: none;">Пожалуйста, введите
+                            сообщение. От 2 до 300 символов.
+                        </div>
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" style="align-content: center;" id="email-btn" type="submit">
+                                Отправить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="emailNotification"
+     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background-color: orange; color: white;
+            border-radius: 8px; display: none;
+            max-width: 90%; width: max-content;
+            word-wrap: break-word; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    Сообщение отправлено!
+</div>
+
+<footer id="footer" class="bg-light footer">
+    <div class="container">
+        <div class="row">
+            <!-- Левая часть футера -->
+            <div class="col-lg-6 text-center text-lg-start my-auto h-100">
+                <ul class="list-inline mb-2">
+                    <li class="list-inline-item"><a href="#store">На верх</a></li>
+                    <li class="list-inline-item"><span>⋅</span></li>
+                    <li class="list-inline-item"><a href="#about-us">О нас</a></li>
+                    <li class="list-inline-item"><span>⋅</span></li>
+                    <li class="list-inline-item"><a href="#catalog">Каталог</a></li>
+                    <li class="list-inline-item"><span>⋅</span></li>
+                    <li class="list-inline-item"><a href="#delivery">Доставка</a></li>
+                    <li class="list-inline-item"><span>⋅</span></li>
+                    <li class="list-inline-item"><a href="#map">Мы на карте</a></li>
+                </ul>
+                <p class="text-muted small mb-4 mb-lg-0">© ПХ "Пасека" 2025. All Rights Reserved.</p>
+            </div>
+
+            <!-- Правая часть футера -->
+            <div class="col-lg-6 text-center text-lg-end my-auto h-100">
+                <div class="text-start text-black" style="background: var(--bs-body-bg);">
+                    <p class="mb-1"><strong>Индивидуальный предприниматель:</strong> Герасимов Евгений Игоревич</p>
+                    <p class="mb-1"><strong>ОГРНИП:</strong> 323730000059008</p>
+                    <p class="mb-1"><strong>ИНН:</strong> 730292226949</p>
+                </div>
+                <div class="text-start text-black" style="background: var(--bs-body-bg);">
+                    <p class="mb-1"><strong>Телефон:</strong> +7 (937) 452-90-04</p>
+                    <p class="mb-1"><strong>Email:</strong> phpaseka@gmail.com</p>
+                    <p class="mb-0"><strong>Адрес:</strong> Ульяновская область, Мелекесский район, п. Труженик, ул.
+                        Луговая, д.35.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/bootstrap/js/show-add-to-cart-notification.js"></script>
+<script src="/assets/bootstrap/js/cart-control-for-index-page.js"></script>
+<script src="/assets/bootstrap/js/show-empty-cart-notification.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
+<script src="/assets/bootstrap/js/user-input-mask-for-index.js"></script>
+<script src="/assets/bootstrap/js/show-send-email-notification.js"></script>
+<script src="/assets/bootstrap/js/validation-form-for-index.js"></script>
+<script src="/assets/bootstrap/js/glightbox-activation.js"></script>
+</body>
+</html>

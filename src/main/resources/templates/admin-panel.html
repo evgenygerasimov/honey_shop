@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{header-fragment :: common-head('Панель управления')}"></th:block>
+<body>
+<div class="container">
+    <h2 class="mt-5">Панель управления</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Управление товарами</h5>
+                    <a href="/admin/products/create" class="btn btn-primary">Добавить товар</a>
+                    <a href="/admin/products" class="btn btn-secondary">Просмотр товаров</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Управление заказами</h5>
+                    <a href="/admin/orders" class="btn btn-primary">Просмотр всех заказов</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Управление пользователями</h5>
+                    <a href="/admin/users" class="btn btn-primary">Просмотр пользователей</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{header-fragment :: common-head('О товаре')}"></th:block>
+<body>
+<div class="container my-5">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">В магазин</a>
+            <div class="ml-auto">
+                <a href="/cart" class="btn btn-outline-primary" id="cart-button">
+                    <i class="bi bi-cart"></i> Корзина (<span id="cart-count">0</span>) — <span id="cart-total">0</span> ₽
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="productImages" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <th:block th:each="image, iterStat : ${product.images}">
+                        <div class="carousel-item" th:classappend="${iterStat.index == 0 ? ' active' : ''}">
+                            <img th:src="@{'/assets/img/' + ${#strings.substring(image, image.lastIndexOf('/') + 1)}}"
+                                 class="d-block w-100" alt="Product Image">
+                        </div>
+                    </th:block>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productImages" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Предыдущий</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productImages" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Следующий</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h2 th:text="${product.name}">Product Name</h2>
+            <p th:text="${product.description}" style="white-space: pre-line;"></p>
+            <span class="product-price" th:text="'Цена: ' + ${product.price}">Price</span>
+
+            <div class="d-flex align-items-center my-3">
+                <button class="btn btn-outline-secondary" id="decreaseBtn" type="button">-</button>
+                <input id="quantityInput" type="number" class="form-control mx-2" value="1" min="1" max="100" step="1" style="width: 70px;">
+                <button class="btn btn-outline-secondary" id="increaseBtn" type="button">+</button>
+            </div>
+
+            <button class="btn btn-success" style="color: white;" id="addToCartBtn"
+                    th:data-id="${product.productId}"
+                    th:data-name="${product.name}"
+                    th:data-price="${product.price}">
+                В корзину
+            </button>
+        </div>
+    </div>
+</div>
+<div id="addToCartNotification"
+     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background-color: green; color: white;
+            border-radius: 8px; display: none;
+            max-width: 90%; width: max-content;
+            word-wrap: break-word; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    Товар добавлен в корзину!
+</div>
+
+<div id="emptyCartNotification"
+     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background-color: orange; color: white;
+            border-radius: 8px; display: none;
+            max-width: 90%; width: max-content;
+            word-wrap: break-word; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    Ваша корзина пуста. Пожалуйста, добавьте товары в корзину.
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/bootstrap/js/cart-control-for-product-page.js"></script>
+<script src="/assets/bootstrap/js/show-add-to-cart-notification.js"></script>
+<script src="/assets/bootstrap/js/show-empty-cart-notification.js"></script>
+</body>
+</html>
+

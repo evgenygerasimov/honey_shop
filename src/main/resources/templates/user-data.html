@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{header-fragment :: common-head('Данные пользвателя')}"></th:block>
+<body>
+    <div class="container">
+        <div th:if="${accessDeniedMessage}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <span th:text="${accessDeniedMessage}">У вас нет прав для выполнения этого действия.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+        </div>
+                <div class="d-flex gap-1">
+                    <form th:action="@{/users/{userId}(userId=${authUserId})}" method="get">
+                        <button type="submit" class="btn btn-light">Моя страница</button>
+                    </form>
+                    <form th:action="@{/products}" method="get">
+                        <button type="submit" class="btn btn-light">Товары</button>
+                    </form>
+                    <form th:action="@{/orders}" method="get">
+                        <button type="submit" class="btn btn-light">Заказы</button>
+                    </form>
+                    <form th:action="@{/users/list}" method="get"
+                          th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
+                        <button type="submit" class="btn btn-light">Пользователи</button>
+                    </form>
+                    <form th:action="@{/users}" method="get"
+                          th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
+                        <button type="submit" class="btn btn-light">Добавить нового пользователя</button>
+                    </form>
+                    <form th:action="@{/users/edit_form/{userId}(userId=${authUserId})}">
+                        <button type="submit" class="btn btn-light">Редактировать профиль</button>
+                    </form>
+                    <form th:action="@{/auth/logout}" method="post">
+                        <button type="submit" class="btn btn-light">Выйти</button>
+                    </form>
+                </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <th:block th:if="${not #strings.isEmpty(user.photo)}">
+                    <img th:src="@{'/app/uploads/img/' + ${#strings.substring(user.photo, user.photo.lastIndexOf('/') + 1)}}"
+                         alt="Фото пользователя" class="img-fluid rounded-3" width="300">
+                </th:block>
+                <th:block th:unless="${not #strings.isEmpty(user.photo)}">
+                    <span>Нет изображения</span>
+                </th:block>
+            </div>
+            <div class="col-md-8">
+                <h2 th:text="${user.firstName + ' ' + user.lastName}"></h2>
+
+                <p><strong>Логин:</strong> <span th:text="${user.username}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                <p><strong>Телефон:</strong> <span th:text="${user.phone}"></span></p>
+                <p><strong>Дата рождения:</strong> <span th:text="${user.birthDate}"></span></p>
+                <p><strong>Роль:</strong> <span th:text="${user.role}"></span></p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        function confirmDelete() {
+            if (confirm("Вы уверены, что хотите удалить пользователя?")) {
+                window.location.href = "/users/delete/" + document.getElementById("userId").value;
+            }
+        }
+    </script>
+</body>
+</html>

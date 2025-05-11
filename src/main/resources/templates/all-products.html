@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{header-fragment :: common-head('Список товаров')}"></th:block>
+<body>
+<div class="container">
+    <h2 class="mt-5 d-flex justify-content-between">
+        Все товары
+        <div class="d-flex gap-1">
+            <form th:action="@{/users/{userId}(userId=${userId})}" method="get">
+                <button type="submit" class="btn btn-light">Моя страница</button>
+            </form>
+            <form th:action="@{/products/new}" method="get">
+                <button type="submit" class="btn btn-light">Создать новый товар</button>
+            </form>
+            <form th:action="@{/categories/new}" method="get">
+                <button type="submit" class=" btn btn-light">Создать новую категорию</button>
+            </form>
+        </div>
+    </h2>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}">Ошибка</span>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Название</th>
+            <th scope="col">Фотографии</th>
+            <th scope="col">Цена</th>
+            <th scope="col">Длина</th>
+            <th scope="col">Ширина</th>
+            <th scope="col">Высота</th>
+            <th scope="col">Вес</th>
+            <th scope="col">Количество</th>
+            <th scope="col">Категория</th>
+            <th scope="col">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.name}"></td>
+            <td>
+                <th:block th:if="${not #lists.isEmpty(product.images)}">
+                    <img th:src="@{'/app/uploads/img/' + ${#strings.substring(product.images[0], product.images[0].lastIndexOf('/') + 1)}}"
+                         alt="Product Image"
+                         class="img-thumbnail"
+                         width="50"
+                         data-bs-toggle="modal" th:attr="data-bs-target='#productModal' + ${product.productId}">
+                </th:block>
+                <th:block th:unless="${not #lists.isEmpty(product.images)}">
+                    <span>Нет изображения</span>
+                </th:block>
+            </td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.length}"></td>
+            <td th:text="${product.width}"></td>
+            <td th:text="${product.height}"></td>
+            <td th:text="${product.weight}"></td>
+            <td th:text="${product.stockQuantity}"></td>
+            <td th:text="${product.category.name}"></td>
+            <td>
+                <div class="d-flex gap-1">
+                    <form th:action="@{/products/edit_form/{productId}(productId=${product.productId})}" method="get">
+                        <button type="submit" class="btn btn-secondary">Редактировать</button>
+                    </form>
+                    <form th:action="@{/products/delete/{productId}(productId=${product.productId})}" method="post">
+                        <button type="submit" class="btn btn-secondary">Удалить</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        <tr th:each="product : ${products}">
+            <div class="modal fade" th:id="'productModal' + ${product.productId}" tabindex="-1"
+                 aria-labelledby="productModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:text="'Фотографии товара ' + ${product.name}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="carousel slide" th:id="'carousel' + ${product.productId}"
+                                         data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div th:each="image, iterStat : ${product.images}"
+                                                 class="carousel-item"
+                                                 th:classappend="${iterStat.first} ? 'active'">
+                                                <img th:src="@{'/app/uploads/img/' + ${#strings.substring(image, image.lastIndexOf('/') + 1)}}"
+                                                     class="d-block w-100"
+                                                     alt="Product Image">
+                                            </div>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button"
+                                                th:attr="data-bs-target='#carousel' + ${product.productId}"
+                                                data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button"
+                                                th:attr="data-bs-target='#carousel' + ${product.productId}"
+                                                data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
