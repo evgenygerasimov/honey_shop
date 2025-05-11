@@ -2,7 +2,6 @@ package org.site.honey_shop.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.UserService;

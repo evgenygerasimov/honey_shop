@@ -38,14 +38,6 @@ public class CdekCacheService {
     private final RedisTemplate<String, String> redisTemplate;
     private final RestTemplate restTemplate;
     private final ExecutorService executor;
-//            =
-//            new ThreadPoolExecutor(
-//            1, 1,
-//            0L, TimeUnit.MILLISECONDS,
-//            new LinkedBlockingQueue<>(),
-//            Executors.defaultThreadFactory(),
-//            new ThreadPoolExecutor.AbortPolicy()
-//    );
 
     public String getOfficesWithCaching(Map<String, String> params) {
         String cacheKey = buildCacheKey(params);

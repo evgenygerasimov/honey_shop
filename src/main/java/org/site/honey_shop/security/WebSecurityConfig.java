@@ -25,9 +25,6 @@ import javax.sql.DataSource;
 @AllArgsConstructor
 public class WebSecurityConfig implements WebMvcConfigurer {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
-
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
