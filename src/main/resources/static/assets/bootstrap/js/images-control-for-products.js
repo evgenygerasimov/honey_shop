@@ -3,8 +3,8 @@
     const imageFilename = button.getAttribute('data-filename');
     const productId = button.getAttribute('data-product-id');
     const formData = new URLSearchParams();
-    formData.append('imageFilename', imageFilename); // строка
-    formData.append('productId', productId); // строка
+    formData.append('imageFilename', imageFilename);
+    formData.append('productId', productId);
 
     fetch('/products/delete-image', {
     method: 'POST',

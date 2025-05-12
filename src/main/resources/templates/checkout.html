@@ -56,7 +56,6 @@
 
         <div class="mb-3">
             <label for="customerPhone" class="form-label">Телефон</label>
-<!--            <input type="text" name="customerPhone" id="customerPhone" class="form-control" th:field="*{customerPhone}"/>-->
             <input type="text" id="customerPhone" name="customerPhone" class="form-control" th:field="*{customerPhone}" required>
         </div>
         <div th:if="${#fields.hasErrors('customerPhone')}" class="alert alert-danger" role="alert">

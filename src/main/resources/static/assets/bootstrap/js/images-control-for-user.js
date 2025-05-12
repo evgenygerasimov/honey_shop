@@ -2,8 +2,8 @@ function deleteImage(button) {
     const imageFilename = button.getAttribute('data-filename');
     const userId = button.getAttribute('data-user-id');
     const formData = new URLSearchParams();
-    formData.append('imageFilename', imageFilename); // строка
-    formData.append('userId',userId); // строка
+    formData.append('imageFilename', imageFilename);
+    formData.append('userId',userId);
 
     fetch('/users/delete-image', {
         method: 'POST',

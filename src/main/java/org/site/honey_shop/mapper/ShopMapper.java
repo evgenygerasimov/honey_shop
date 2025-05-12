@@ -17,4 +17,4 @@ public interface ShopMapper {
         String middleName = order.getMiddleName() != null ? order.getMiddleName() : "";
         return String.format("%s %s %s", order.getLastName(), order.getFirstName(), middleName).trim().replaceAll(" +", " ");
     }
-  }
+}

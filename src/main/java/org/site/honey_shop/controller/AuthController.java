@@ -2,7 +2,6 @@ package org.site.honey_shop.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.security.JwtService;
 import org.site.honey_shop.dto.UserResponseDTO;
 import org.site.honey_shop.entity.Token;
