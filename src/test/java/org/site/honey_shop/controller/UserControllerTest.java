@@ -1,6 +1,5 @@
 package org.site.honey_shop.controller;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,7 +102,7 @@ class UserControllerTest {
                 .phone("+7 (123) 456-78-90")
                 .photo("profile_pic.jpg")
                 .birthDate(LocalDate.of(1990, 5, 15))
-                .role(Role.ROLE_SUPER_ADMIN)  // Это пример роли, возможно будет использоваться другая роль
+                .role(Role.ROLE_SUPER_ADMIN)
                 .enabled(true)
                 .build();
 
@@ -135,10 +134,10 @@ class UserControllerTest {
         mockMvc.perform(multipart("/users")
                         .file(image)
                         .flashAttr("user", user))
-                .andExpect(status().is3xxRedirection())  // Ожидаем редирект
-                .andExpect(view().name("redirect:/users"))  // Ожидаем редирект на /users
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/users"))
                 .andExpect(flash().attributeExists("errorMessage"))
-                .andExpect(flash().attributeExists("user"));  // Проверяем, что атрибут user добавлен (опционально)
+                .andExpect(flash().attributeExists("user"));
     }
 
     @Test

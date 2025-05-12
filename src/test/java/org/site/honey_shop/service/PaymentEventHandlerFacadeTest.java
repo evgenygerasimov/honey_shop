@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.site.honey_shop.service.PaymentEventHandlerFacade;
-import org.site.honey_shop.service.PaymentEventHandlerService;
 
 import java.util.Map;
 
@@ -30,7 +28,7 @@ class PaymentEventHandlerFacadeTest {
 
 
     @Test
-    void testHandlePaymentSucceeded() throws Exception {
+    void testHandlePaymentSucceeded() {
         String payload = """
                 {
                   "event": "payment.succeeded",
@@ -48,7 +46,7 @@ class PaymentEventHandlerFacadeTest {
     }
 
     @Test
-    void testHandlePaymentCanceled() throws Exception {
+    void testHandlePaymentCanceled() {
         String payload = """
                 {
                   "event": "payment.canceled",
@@ -66,7 +64,7 @@ class PaymentEventHandlerFacadeTest {
     }
 
     @Test
-    void testHandleRefundSucceeded() throws Exception {
+    void testHandleRefundSucceeded() {
         String payload = """
                 {
                   "event": "refund.succeeded",
@@ -84,7 +82,7 @@ class PaymentEventHandlerFacadeTest {
     }
 
     @Test
-    void testHandleUnknownEvent() throws Exception {
+    void testHandleUnknownEvent() {
         String payload = """
                 {
                   "event": "unknown.event",
@@ -103,7 +101,6 @@ class PaymentEventHandlerFacadeTest {
     void testHandleInvalidJson() {
         String invalidJson = "{ this is not valid json }";
 
-        // Should not throw
         facade.eventHandler(invalidJson);
 
         verifyNoInteractions(paymentEventHandlerService);

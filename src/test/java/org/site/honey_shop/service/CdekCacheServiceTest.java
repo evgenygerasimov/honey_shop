@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.site.honey_shop.service.CdekCacheService;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -135,7 +134,7 @@ class CdekCacheServiceTest {
         Future<Object> mockFuture = mock(Future.class);
 
         when(executor.submit(any(Runnable.class))).thenReturn((Future) mockFuture);
-        when(mockFuture.get(anyLong(), any())).thenReturn(null); // <--- ЭТО ключевой момент
+        when(mockFuture.get(anyLong(), any())).thenReturn(null);
 
         cdekCacheService.scheduledRefreshWithTimeout();
 

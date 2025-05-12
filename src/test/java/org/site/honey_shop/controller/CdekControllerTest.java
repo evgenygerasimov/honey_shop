@@ -35,12 +35,11 @@ class CdekControllerTest {
     void testGetOffices() throws Exception {
         String mockResponse = "{\"offices\": [{\"id\": 1, \"name\": \"Office 1\"}]}";
 
-        // Мокаем кэшированные данные
         when(cdekCacheService.getOfficesWithCaching(anyMap())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/cdek/offices")
                         .param("city", "Moscow"))
-                .andExpect(status().isOk())  // Проверяем, что статус 200 OK
-                .andExpect(content().json(mockResponse));  // Проверяем, что возвращается нужный JSON
+                .andExpect(status().isOk())
+                .andExpect(content().json(mockResponse));
     }
 }

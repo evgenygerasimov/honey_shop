@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.repository.TokenRepository;
-import org.site.honey_shop.security.JwtService;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;

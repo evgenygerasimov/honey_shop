@@ -13,7 +13,6 @@ import org.site.honey_shop.entity.Order;
 import org.site.honey_shop.entity.Payment;
 import org.site.honey_shop.entity.PaymentStatus;
 import org.site.honey_shop.repository.PaymentRepository;
-import org.site.honey_shop.service.PaymentService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -40,10 +39,13 @@ class PaymentServiceTest {
 
     @Mock
     private PaymentRepository paymentRepository;
+
     @Mock
     private RestTemplate restTemplate;
+
     @Mock
     private ObjectMapper objectMapper;
+
     @Mock
     private HttpSession session;
 

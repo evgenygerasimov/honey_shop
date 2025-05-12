@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Authority;
 import org.site.honey_shop.entity.User;
 import org.site.honey_shop.repository.AuthorityRepository;
-import org.site.honey_shop.service.AuthorityService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -18,6 +17,7 @@ class AuthorityServiceTest {
 
     @Mock
     private AuthorityRepository authorityRepository;
+
     @InjectMocks
     private AuthorityService authorityService;
 

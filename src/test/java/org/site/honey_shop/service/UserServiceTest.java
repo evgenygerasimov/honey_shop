@@ -17,8 +17,6 @@ import org.site.honey_shop.exception.ImageUploadException;
 import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.UserRepository;
-import org.site.honey_shop.service.AuthorityService;
-import org.site.honey_shop.service.UserService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,10 +39,13 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
     @Mock
     private ShopMapper shopMapper;
+
     @Mock
     private AuthorityService authorityService;
+
     @Mock
     private Principal principal;
 
@@ -120,7 +121,7 @@ class UserServiceTest {
     }
 
     @Test
-    void save_shouldSaveUserWithImage() throws IOException {
+    void save_shouldSaveUserWithImage() {
         MockMultipartFile file = new MockMultipartFile("image", "image.jpg", "image/jpeg", "fake content".getBytes());
         User savedUser = user.toBuilder().photo("/assets/img/image.jpg").build();
 
@@ -196,7 +197,7 @@ class UserServiceTest {
     }
 
     @Test
-    void imageSelectionProcessing_shouldReturnUrlOnSuccess() throws IOException {
+    void imageSelectionProcessing_shouldReturnUrlOnSuccess() {
         MockMultipartFile file = new MockMultipartFile("image", "image.jpg", "image/jpeg", "abc".getBytes());
 
         String url = userService.imageSelectionProcessing(file);

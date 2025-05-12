@@ -96,7 +96,7 @@ class OrderControllerTest {
     @Test
     void testCreateOrder_WithErrors() throws Exception {
         mockMvc.perform(post("/orders")
-                        .param("orderItemsData", "") // обязательно передаём параметр
+                        .param("orderItemsData", "")
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("checkout"));
@@ -114,7 +114,7 @@ class OrderControllerTest {
                 .deliveryAmount(BigDecimal.valueOf(100.00))
                 .productAmount(BigDecimal.valueOf(400.00))
                 .totalOrderAmount(BigDecimal.valueOf(500.00))
-                .deliveryType("Курьер") // обязательно, так как поле nullable = false
+                .deliveryType("Курьер")
                 .orderStatus(OrderStatus.PENDING)
                 .paymentStatus(PaymentStatus.PENDING)
                 .build();

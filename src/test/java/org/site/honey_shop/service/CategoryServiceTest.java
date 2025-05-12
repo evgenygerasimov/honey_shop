@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.repository.CategoryRepository;
-import org.site.honey_shop.service.CategoryService;
 
 import java.util.List;
 
@@ -26,6 +25,7 @@ class CategoryServiceTest {
     private CategoryService categoryService;
 
     private final String existingCategoryName = "Гречишный";
+
     private final String newCategoryName = "Разнотравье";
 
     @Test

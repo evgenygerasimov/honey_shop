@@ -123,7 +123,7 @@ class ProductControllerTest {
         when(userDto.userId()).thenReturn(UUID.randomUUID());
         when(userService.findByUsername("admin")).thenReturn(userDto);
         when(principal.getName()).thenReturn("admin");
-        mockMvc.perform(get("/products/new").principal(principal))  // Передаем principal
+        mockMvc.perform(get("/products/new").principal(principal))
                 .andExpect(status().isOk())
                 .andExpect(view().name("add-product"));
 

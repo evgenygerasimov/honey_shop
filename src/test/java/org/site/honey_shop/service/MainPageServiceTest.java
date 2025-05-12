@@ -7,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.entity.Product;
-import org.site.honey_shop.service.MainPageService;
-import org.site.honey_shop.service.ProductService;
 
 import java.math.BigDecimal;
 import java.util.List;

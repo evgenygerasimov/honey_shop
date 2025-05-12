@@ -32,10 +32,8 @@ public class TestContainerConfig {
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
 
-        // Liquibase
         registry.add("spring.liquibase.change-log", () -> "classpath:/db/changelog/db.changelog-master-test.xml");
 
-        // Redis (critical!)
         registry.add("spring.data.redis.host", redis::getHost);
         registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
     }

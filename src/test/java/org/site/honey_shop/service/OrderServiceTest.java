@@ -1,6 +1,5 @@
 package org.site.honey_shop.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,6 @@ import org.site.honey_shop.entity.PaymentStatus;
 import org.site.honey_shop.exception.OrderCreateException;
 import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.OrderRepository;
-import org.site.honey_shop.service.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

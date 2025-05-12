@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.site.honey_shop.controller.AppController;
 import org.site.honey_shop.entity.Order;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.service.MainPageService;

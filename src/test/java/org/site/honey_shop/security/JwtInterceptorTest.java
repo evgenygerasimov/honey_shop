@@ -25,14 +25,26 @@ import static org.mockito.Mockito.*;
 
 class JwtInterceptorTest {
 
-    @Mock private JwtService jwtService;
-    @Mock private AuthService authService;
-    @Mock private UserDetailsService userDetailsService;
-    @Mock private HttpServletRequest request;
-    @Mock private HttpServletResponse response;
-    @Mock private HandlerMethod handlerMethod;
+    @Mock
+    private JwtService jwtService;
 
-    @InjectMocks private JwtInterceptor jwtInterceptor;
+    @Mock
+    private AuthService authService;
+
+    @Mock
+    private UserDetailsService userDetailsService;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
+
+    @Mock
+    private HandlerMethod handlerMethod;
+
+    @InjectMocks
+    private JwtInterceptor jwtInterceptor;
 
     private final Token validToken = new Token();
 

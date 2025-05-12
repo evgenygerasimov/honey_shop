@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.site.honey_shop.controller.AuthController;
 import org.site.honey_shop.dto.UserResponseDTO;
 import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.exception.MyAuthenticationException;

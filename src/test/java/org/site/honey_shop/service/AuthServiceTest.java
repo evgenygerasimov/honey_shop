@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.security.JwtService;
-import org.site.honey_shop.service.AuthService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,10 +27,13 @@ class AuthServiceTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
+
     @Mock
     private JwtService jwtService;
+
     @Mock
     private HttpServletResponse response;
+
     @InjectMocks
     private AuthService authService;
 

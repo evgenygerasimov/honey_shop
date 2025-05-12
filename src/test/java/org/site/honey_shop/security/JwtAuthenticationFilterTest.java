@@ -39,9 +39,6 @@ class JwtAuthenticationFilterTest {
     @Mock
     private UserDetails userDetails;
 
-    @Captor
-    private ArgumentCaptor<UsernamePasswordAuthenticationToken> authCaptor;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -57,8 +54,8 @@ class JwtAuthenticationFilterTest {
         when(jwtService.isAccessTokenExpired(accessToken)).thenReturn(false);
         when(jwtService.extractUserName(accessToken)).thenReturn(username);
         when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
-        when(userDetails.getAuthorities()).thenReturn(null); // или замокать список ролей
-        when(userDetails.getUsername()).thenReturn(username); // 🔥 добавлено!
+        when(userDetails.getAuthorities()).thenReturn(null);
+        when(userDetails.getUsername()).thenReturn(username);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
 

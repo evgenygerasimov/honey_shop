@@ -12,8 +12,6 @@ import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.exception.DeleteProductException;
 import org.site.honey_shop.repository.ProductRepository;
-import org.site.honey_shop.service.CategoryService;
-import org.site.honey_shop.service.ProductService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -122,7 +120,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void createProduct_shouldSaveProductWithOrderedImages() throws IOException {
+    void createProduct_shouldSaveProductWithOrderedImages() {
         Category category = Category.builder()
                 .name("Honey")
                 .build();
