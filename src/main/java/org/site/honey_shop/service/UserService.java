@@ -182,12 +182,8 @@ public class UserService {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) {
-                User user = userRepository.findByUsername(username)
-                        .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-                if (user == null) {
-                    throw new UsernameNotFoundException("User not found with username: " + username);
-                }
-                return user;
+                return userRepository.findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
             }
         };
     }

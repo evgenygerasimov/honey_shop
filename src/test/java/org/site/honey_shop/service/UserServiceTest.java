@@ -19,6 +19,7 @@ import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.UserRepository;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -236,7 +237,7 @@ class UserServiceTest {
     void userDetailsService_shouldThrowWhenUserNotFound() {
         when(userRepository.findByUsername("notfound")).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class,
+        assertThrows(UsernameNotFoundException.class,
                 () -> userService.userDetailsService().loadUserByUsername("notfound"));
     }
 }
