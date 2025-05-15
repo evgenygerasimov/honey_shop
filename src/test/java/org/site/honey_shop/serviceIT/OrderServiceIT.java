@@ -2,14 +2,17 @@ package org.site.honey_shop.serviceIT;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.site.honey_shop.TestContainerConfig;
 import org.site.honey_shop.dto.OrderDTO;
 import org.site.honey_shop.entity.*;
 import org.site.honey_shop.repository.OrderRepository;
+import org.site.honey_shop.service.OrderEventPublisher;
 import org.site.honey_shop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -26,6 +29,9 @@ class OrderServiceIT extends TestContainerConfig {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @MockitoBean
+    private OrderEventPublisher orderEventPublisher;
 
     @BeforeEach
     void setUp() {

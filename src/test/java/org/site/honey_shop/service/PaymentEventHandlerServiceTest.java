@@ -32,6 +32,9 @@ class PaymentEventHandlerServiceTest {
     @Mock
     private PaymentService paymentService;
 
+    @Mock
+    private OrderEventPublisher orderEventPublisher;
+
     @InjectMocks
     private PaymentEventHandlerService service;
 

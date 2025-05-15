@@ -25,6 +25,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ShopMapper shopMapper;
+    private final OrderEventPublisher orderEventPublisher;
 
     public OrderDTO findOrderDTOById(UUID orderId) {
         log.info("Find orderDTO: {}", orderId);
@@ -90,6 +91,7 @@ public class OrderService {
         order.setOrderItems(orderItems);
         log.info("Attempt to save order: {}", order.getOrderId());
         order = orderRepository.save(order);
+        orderEventPublisher.publishOrderCreatedEvent(" на сумму " + order.getTotalOrderAmount() + " руб.");
         log.info("Order saved: {}", order.getOrderId());
         return order;
     }

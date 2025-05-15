@@ -12,6 +12,7 @@ import org.site.honey_shop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -42,6 +43,9 @@ class PaymentEventHandlerServiceIT extends TestContainerConfig {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @MockitoBean
+    private OrderEventPublisher orderEventPublisher;
 
     @BeforeEach
     void clearDb() {

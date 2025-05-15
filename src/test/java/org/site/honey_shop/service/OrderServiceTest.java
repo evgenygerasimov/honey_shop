@@ -39,6 +39,9 @@ class OrderServiceTest {
     @Mock
     private ShopMapper shopMapper;
 
+    @Mock
+    private OrderEventPublisher orderEventPublisher;
+
     @Captor
     private ArgumentCaptor<Order> orderCaptor;
 
