@@ -95,7 +95,7 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default
     private Set<Authority> authorities = new HashSet<>();
 

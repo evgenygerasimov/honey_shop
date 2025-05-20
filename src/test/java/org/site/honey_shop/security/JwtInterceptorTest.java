@@ -53,6 +53,7 @@ class JwtInterceptorTest {
         MockitoAnnotations.openMocks(this);
         validToken.setAccessToken("newAccessToken");
         validToken.setRefreshToken("newRefreshToken");
+        validToken.setRefreshTokenValid(true);
     }
 
     @Test
@@ -154,6 +155,12 @@ class JwtInterceptorTest {
 
         when(jwtService.isAccessTokenExpired("expiredAccessToken")).thenReturn(true);
         when(jwtService.isRefreshTokenExpired("validRefreshToken")).thenReturn(false);
+
+        // Добавляем мок для findByRefreshToken:
+        Token token = mock(Token.class);
+        when(token.isRefreshTokenValid()).thenReturn(true);
+        when(jwtService.findByRefreshToken("validRefreshToken")).thenReturn(token);
+
         when(authService.refreshToken("validRefreshToken")).thenThrow(new RuntimeException("Refresh error"));
 
         boolean result = jwtInterceptor.preHandle(request, response, handlerMethod);
@@ -163,4 +170,5 @@ class JwtInterceptorTest {
         verify(response).addCookie(argThat(cookie -> cookie.getName().equals("access_token") && cookie.getMaxAge() == 0));
         verify(response).addCookie(argThat(cookie -> cookie.getName().equals("refresh_token") && cookie.getMaxAge() == 0));
     }
+
 }

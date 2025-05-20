@@ -53,7 +53,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                 return true;
             }
 
-            if (refreshToken.isPresent() && !jwtService.isRefreshTokenExpired(refreshToken.get())) {
+            if (refreshToken.isPresent() && !jwtService.isRefreshTokenExpired(refreshToken.get()) && jwtService.findByRefreshToken(refreshToken.get()).isRefreshTokenValid()) {
                 try {
                     log.info("Trying to refresh access token using refresh token {}.", refreshToken.get());
                     Token newToken = authService.refreshToken(refreshToken.get());

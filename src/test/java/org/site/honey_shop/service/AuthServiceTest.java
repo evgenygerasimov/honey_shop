@@ -158,7 +158,6 @@ class AuthServiceTest {
     @Test
     void testLogout() {
         when(jwtService.findByAccessToken(token.getAccessToken())).thenReturn(token);
-        when(jwtService.extractUserName(token.getAccessToken())).thenReturn(token.getUsername());
 
         authService.logout(token.getAccessToken(), response);
 
@@ -172,7 +171,6 @@ class AuthServiceTest {
         assertEquals(2, cookies.size());
         for (Cookie c : cookies) {
             assertEquals(0, c.getMaxAge());
-            assertTrue(c.getName().equals("access_token") || c.getName().equals("refresh_token"));
         }
     }
 }

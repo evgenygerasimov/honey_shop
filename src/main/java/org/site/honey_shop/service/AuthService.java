@@ -73,7 +73,6 @@ public class AuthService {
         }
     }
 
-
     public Token refreshToken(String refreshToken) {
         log.info("Trying to refresh token: {}", refreshToken);
         Token storedToken = jwtService.findByRefreshToken(refreshToken);
@@ -105,6 +104,5 @@ public class AuthService {
         refreshTokeCookie.setPath("/");
         refreshTokeCookie.setMaxAge(0);
         response.addCookie(refreshTokeCookie);
-        log.info("User {} logged out successfully", jwtService.extractUserName(accessToken));
     }
 }
