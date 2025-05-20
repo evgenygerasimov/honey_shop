@@ -51,6 +51,7 @@ public class PaymentEventHandlerService {
 
         paymentService.update(payment);
         orderService.update(order);
+        orderEventPublisher.publishOrderInfoEvent(order);
         orderEventPublisher.publishOrderCreatedEvent(" на сумму " + order.getTotalOrderAmount() + " руб. успешно оплачен.");
         log.info("Order and payment status updated successfully.");
 
@@ -81,6 +82,7 @@ public class PaymentEventHandlerService {
         paymentService.update(payment);
         orderService.update(order);
         orderEventPublisher.publishOrderCreatedEvent(" на сумму " + order.getTotalOrderAmount() + " руб. отменен.");
+
         log.info("Order and payment status updated successfully.");
 
     }

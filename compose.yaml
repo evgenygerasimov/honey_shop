@@ -61,6 +61,8 @@ services:
       KAFKA_LISTENER_NAME: PLAINTEXT
       KAFKA_LISTENER_PORT: 9092
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    depends_on:
+      - zookeeper
     networks:
       - honey_net
 
@@ -89,6 +91,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - kafka
     networks:
       - honey_net
 

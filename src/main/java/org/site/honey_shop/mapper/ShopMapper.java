@@ -17,4 +17,9 @@ public interface ShopMapper {
         String middleName = order.getMiddleName() != null ? order.getMiddleName() : "";
         return String.format("%s %s %s", order.getLastName(), order.getFirstName(), middleName).trim().replaceAll(" +", " ");
     }
+
+    @Mapping(source = "createDate", target = "bucketTime")
+    @Mapping(expression = "java(order.getOrderItems() != null ? order.getOrderItems().size() : 0)", target = "totalItemsCount")
+    @Mapping(expression = "java(order.getProductAmount() != null ? order.getProductAmount().doubleValue() : 0.0)", target = "totalItemsAmount")
+    OrderInfoDto toOrderInfoDto(Order order);
 }
