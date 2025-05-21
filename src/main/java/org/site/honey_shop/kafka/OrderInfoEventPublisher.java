@@ -1,10 +1,9 @@
-package org.site.honey_shop.service;
+package org.site.honey_shop.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.site.honey_shop.dto.OrderInfoDto;
 import org.site.honey_shop.entity.Order;
 import org.site.honey_shop.mapper.ShopMapper;
@@ -13,14 +12,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class OrderEventPublisher {
+public class OrderInfoEventPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ShopMapper shopMapper;
-
-    public void publishOrderCreatedEvent(String message) {
-        kafkaTemplate.send("order.created", message);
-    }
 
     public void publishOrderInfoEvent(Order order) {
         OrderInfoDto orderInfoDto = shopMapper.toOrderInfoDto(order);

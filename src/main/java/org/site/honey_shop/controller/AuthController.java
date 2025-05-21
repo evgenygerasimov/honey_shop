@@ -1,5 +1,6 @@
 package org.site.honey_shop.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.site.honey_shop.security.JwtService;
@@ -46,8 +47,8 @@ public class AuthController {
     @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/logout")
     public String logout(@CookieValue(name = "access_token", required = false) String accessToken,
-                         HttpServletResponse httpServletResponse) {
-        authService.logout(accessToken, httpServletResponse);
+                         HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
+        authService.logout(accessToken, httpServletRequest, httpServletResponse);
         return "redirect:/auth/login";
     }
 }

@@ -1,6 +1,8 @@
 package org.site.honey_shop.serviceIT;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,8 +24,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -148,10 +149,15 @@ class AuthServiceIT extends TestContainerConfig {
         );
 
         HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpSession session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+
         Token token = authService.login("logoutuser", "Password1!", response);
 
-        authService.logout(token.getAccessToken(), response);
+        authService.logout(token.getAccessToken(), request, response);
 
+        verify(session).invalidate();
         Optional<Token> found = tokenRepository.findByAccessToken(token.getAccessToken());
         assertThat(found.get().isAccessTokenValid()).isFalse();
     }

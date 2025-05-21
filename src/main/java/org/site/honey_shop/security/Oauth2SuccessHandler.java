@@ -7,11 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.entity.Token;
-import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -58,7 +56,7 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
 
         jwtService.saveToken(userDetails.getUsername(), accessToken, refreshToken);
 
-        setCookie(response, accessToken, refreshToken);
+        addTokensToCookie(response, accessToken, refreshToken);
 
         response.sendRedirect("/users/" + userService.findByUsername(username).userId());
     }
@@ -96,6 +94,7 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
             if (accessValid && refreshValid) {
                 log.info("User {} already logged in with valid tokens", username);
 
+                addTokensToCookie(response, token.getAccessToken(), token.getRefreshToken());
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken(
                                 username,
@@ -110,7 +109,7 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
         return false;
     }
 
-    private void setCookie(HttpServletResponse response, String accessToken, String refreshToken) {
+    private void addTokensToCookie(HttpServletResponse response, String accessToken, String refreshToken) {
         Cookie accessCookie = new Cookie("access_token", accessToken);
         accessCookie.setHttpOnly(true);
         accessCookie.setSecure(true);

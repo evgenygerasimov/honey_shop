@@ -14,6 +14,7 @@ import org.site.honey_shop.entity.OrderStatus;
 import org.site.honey_shop.entity.Payment;
 import org.site.honey_shop.entity.PaymentStatus;
 import org.site.honey_shop.exception.OrderCreateException;
+import org.site.honey_shop.kafka.OrderEventPublisher;
 import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.OrderRepository;
 

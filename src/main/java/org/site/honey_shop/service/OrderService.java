@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.dto.OrderDTO;
 import org.site.honey_shop.entity.*;
 import org.site.honey_shop.exception.OrderCreateException;
+import org.site.honey_shop.kafka.OrderEventPublisher;
 import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.OrderRepository;
 import org.springframework.stereotype.Service;

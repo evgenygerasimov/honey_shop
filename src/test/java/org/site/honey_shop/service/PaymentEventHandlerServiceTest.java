@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.*;
+import org.site.honey_shop.kafka.OrderEventPublisher;
+import org.site.honey_shop.kafka.OrderInfoEventPublisher;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,9 @@ class PaymentEventHandlerServiceTest {
 
     @Mock
     private OrderEventPublisher orderEventPublisher;
+
+    @Mock
+    private OrderInfoEventPublisher orderInfoEventPublisher;
 
     @InjectMocks
     private PaymentEventHandlerService service;

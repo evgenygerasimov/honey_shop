@@ -1,6 +1,7 @@
 package org.site.honey_shop.controller;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,6 +124,6 @@ class AuthControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/auth/login"));
 
-        verify(authService, times(1)).logout(eq(accessToken), any(HttpServletResponse.class));
+        verify(authService, times(1)).logout(eq(accessToken), any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
 }

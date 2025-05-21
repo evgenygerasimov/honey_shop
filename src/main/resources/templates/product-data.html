@@ -19,7 +19,7 @@
                 <div class="carousel-inner">
                     <th:block th:each="image, iterStat : ${product.images}">
                         <div class="carousel-item" th:classappend="${iterStat.index == 0 ? ' active' : ''}">
-                            <img th:src="@{'/assets/img/' + ${#strings.substring(image, image.lastIndexOf('/') + 1)}}"
+                            <img th:src="@{'/app/uploads/img/' + ${#strings.substring(image, image.lastIndexOf('/') + 1)}}"
                                  class="d-block w-100" alt="Product Image">
                         </div>
                     </th:block>

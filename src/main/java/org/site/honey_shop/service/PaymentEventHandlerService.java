@@ -3,6 +3,8 @@ package org.site.honey_shop.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.entity.*;
+import org.site.honey_shop.kafka.OrderEventPublisher;
+import org.site.honey_shop.kafka.OrderInfoEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class PaymentEventHandlerService {
     private final ProductService productService;
     private final PaymentService paymentService;
     private final OrderEventPublisher orderEventPublisher;
+    private final OrderInfoEventPublisher orderInfoEventPublisher;
 
     @Transactional
     public void handlePaymentSucceeded(Map<String, Object> paymentData) {
@@ -51,7 +54,7 @@ public class PaymentEventHandlerService {
 
         paymentService.update(payment);
         orderService.update(order);
-        orderEventPublisher.publishOrderInfoEvent(order);
+        orderInfoEventPublisher.publishOrderInfoEvent(order);
         orderEventPublisher.publishOrderCreatedEvent(" на сумму " + order.getTotalOrderAmount() + " руб. успешно оплачен.");
         log.info("Order and payment status updated successfully.");
 

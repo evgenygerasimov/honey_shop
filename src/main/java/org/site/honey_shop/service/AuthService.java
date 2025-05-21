@@ -1,6 +1,7 @@
 package org.site.honey_shop.service;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,7 @@ public class AuthService {
                     && !jwtService.isAccessTokenExpired(token.getAccessToken())
                     && !jwtService.isRefreshTokenExpired(token.getRefreshToken())) {
                 log.info("User {} already logged in", username);
+                addTokensToCookie(response, token.getAccessToken(), token.getRefreshToken());
                 return token;
             } else {
                 for (Token expiredToken : jwtService.getTokens()) {
@@ -51,18 +54,7 @@ public class AuthService {
             String accessToken = jwtService.generateAccessToken(userDetails.getUsername());
             String refreshToken = jwtService.generateRefreshToken(userDetails.getUsername());
 
-            Cookie accessCookie = new Cookie("access_token", accessToken);
-            accessCookie.setHttpOnly(true);
-            accessCookie.setSecure(true);
-            accessCookie.setPath("/");
-
-            Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
-            refreshCookie.setHttpOnly(true);
-            refreshCookie.setSecure(true);
-            refreshCookie.setPath("/");
-
-            response.addCookie(accessCookie);
-            response.addCookie(refreshCookie);
+            addTokensToCookie(response, accessToken, refreshToken);
 
             log.info("User {} logged in successfully", username);
             return jwtService.saveToken(userDetails.getUsername(), accessToken, refreshToken);
@@ -71,6 +63,21 @@ public class AuthService {
             log.error("Authentication failed for user: {}", username, e);
             throw new MyAuthenticationException("Неверный логин или пароль");
         }
+    }
+
+    private static void addTokensToCookie(HttpServletResponse response, String accessToken, String refreshToken) {
+        Cookie accessCookie = new Cookie("access_token", accessToken);
+        accessCookie.setHttpOnly(true);
+        accessCookie.setSecure(true);
+        accessCookie.setPath("/");
+
+        Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        refreshCookie.setPath("/");
+
+        response.addCookie(accessCookie);
+        response.addCookie(refreshCookie);
     }
 
     public Token refreshToken(String refreshToken) {
@@ -90,7 +97,7 @@ public class AuthService {
         return jwtService.saveToken(storedToken.getUsername(), newAccessToken, newRefreshToken);
     }
 
-    public void logout(String accessToken, HttpServletResponse response) {
+    public void logout(String accessToken, HttpServletRequest request, HttpServletResponse response) {
         jwtService.invalidateToken(jwtService.findByAccessToken(accessToken));
 
         Cookie accessTokenCookie = new Cookie("access_token", null);
@@ -104,5 +111,11 @@ public class AuthService {
         refreshTokeCookie.setPath("/");
         refreshTokeCookie.setMaxAge(0);
         response.addCookie(refreshTokeCookie);
+
+        // 🧹 Сбрасываем авторизацию
+        SecurityContextHolder.clearContext();
+
+        // 🧼 Инвалидируем HTTP-сессию
+        request.getSession().invalidate();
     }
 }

@@ -1,7 +1,9 @@
 package org.site.honey_shop.service;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +35,9 @@ class AuthServiceTest {
 
     @Mock
     private HttpServletResponse response;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private AuthService authService;
@@ -158,8 +163,10 @@ class AuthServiceTest {
     @Test
     void testLogout() {
         when(jwtService.findByAccessToken(token.getAccessToken())).thenReturn(token);
+        HttpSession session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
 
-        authService.logout(token.getAccessToken(), response);
+        authService.logout(token.getAccessToken(), request, response);
 
         verify(jwtService).invalidateToken(token);
 
