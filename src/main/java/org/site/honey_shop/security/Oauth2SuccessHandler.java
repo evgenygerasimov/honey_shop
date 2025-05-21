@@ -7,9 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.entity.Token;
+import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -31,8 +33,14 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String username = extractUsernameFromEmail(authentication);
+        UserDetails userDetails;
 
-        UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
+        try {
+            userDetails = userService.userDetailsService().loadUserByUsername(username);
+        } catch (Exception e) {
+            response.sendRedirect("/auth/login?error=user_not_found");
+            return;
+        }
 
         List<Token> userTokens = getUserTokens(username);
 
@@ -68,8 +76,9 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
         return attributes.entrySet().stream().filter(entry -> entry
                 .getKey().equals("email")).map(entry -> entry
                 .getValue()
-                .toString()
-                .replaceAll("@.*", "")).findFirst().orElseThrow();
+                .toString())
+                .findFirst()
+                .orElseThrow();
     }
 
     private void invalidateExpiredToken(List<Token> userTokens, String username) {

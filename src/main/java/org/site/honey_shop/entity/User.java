@@ -5,10 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.site.honey_shop.annotation.Adult;
-import org.site.honey_shop.annotation.OnCreate;
-import org.site.honey_shop.annotation.OnUpdate;
-import org.site.honey_shop.annotation.UniqueUserName;
+import org.site.honey_shop.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,12 +29,8 @@ public class User implements UserDetails {
     private UUID userId;
 
     @UniqueUserName(groups = {OnCreate.class})
+    @ValidGoogleEmail(groups = {OnCreate.class})
     @NotBlank(message = "Имя пользователя не может быть пустым.")
-    @Pattern(
-            regexp = "^[a-zA-Z0-9]{5,20}$",
-            message = "Логин должен содержать только латинские буквы и цифры, от 5 до 20 символов.",
-            groups = {OnCreate.class }
-    )
     @Column(name = "username")
     private String username;
 
