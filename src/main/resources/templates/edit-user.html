@@ -64,7 +64,7 @@
             <div id="existing-images">
                 <ul>
                     <th:block th:if="${not #strings.isEmpty(user.photo)}">
-                        <img th:src="@{'/assets/img/' + ${#strings.substring(user.photo, user.photo.lastIndexOf('/') + 1)}}"
+                        <img th:src="@{'/app/uploads/img/' + ${#strings.substring(user.photo, user.photo.lastIndexOf('/') + 1)}}"
                              alt="Мое фото" width="100">
                         <button type="button" class="btn btn-danger"
                                 th:data-filename="${user.photo}"
@@ -112,7 +112,7 @@
             </select><br>
         </div>
         <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Отредактировать пользователя</button>
+            <button type="submit" class="btn btn-sm btn-secondary">Отредактировать пользователя</button>
         </div>
     </form>
 </div>

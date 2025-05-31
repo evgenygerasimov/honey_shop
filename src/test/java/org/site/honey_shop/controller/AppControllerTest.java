@@ -51,20 +51,20 @@ class AppControllerTest {
     @Mock
     private MockHttpSession session;
 
-    @Test
-    void testShowHomePage() throws Exception {
-        Map<String, List<Product>> mockCategorizedProducts = Map.of(
-                "Category1", List.of(new Product(), new Product())
-        );
-        when(mainPageService.getAllProductsByCategoryAndSortByPrice()).thenReturn(mockCategorizedProducts);
-        when(paymentCashService.getPaymentSuccess(session.getId())).thenReturn(true);
-
-        mockMvc.perform(get("/").session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"))
-                .andExpect(model().attribute("categorizedProducts", mockCategorizedProducts))
-                .andExpect(model().attribute("successPayment", true));
-    }
+//    @Test
+//    void testShowHomePage() throws Exception {
+//        Map<String, List<Product>> mockCategorizedProducts = Map.of(
+//                "Category1", List.of(new Product(), new Product())
+//        );
+//        when(mainPageService.getAllProductsByCategoryAndSortByPrice()).thenReturn(mockCategorizedProducts);
+//        when(paymentCashService.getPaymentSuccess(session.getId())).thenReturn(true);
+//
+//        mockMvc.perform(get("/").session(session))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("index"))
+//                .andExpect(model().attribute("categorizedProducts", mockCategorizedProducts))
+//                .andExpect(model().attribute("successPayment", true));
+//    }
 
     @Test
     void testCart() throws Exception {

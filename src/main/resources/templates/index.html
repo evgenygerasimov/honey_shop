@@ -48,26 +48,19 @@
         </div>
     </section>
 </div>
+
 <div id="catalog">
     <section class="text-center bg-light features-icons" style="margin-bottom: 150px;">
         <div class="container"><h1>Каталог</h1></div>
         <div class="container">
-            <div class="card-group" style="border-radius: 0;border-width: 0;">
-                <div class="card" style="border-width: 0;">
-                    <img class="card-img-top w-100 d-block" src="/assets/img/IMG_2900.jpg">
+            <div class="card-group" style="border-radius: 0; border-width: 0;">
+                <div th:each="category : ${categories}" class="card" style="border-width: 0;">
+                    <img th:src="@{'/app/uploads/img/' + ${#strings.substring(category.imageUrl, category.imageUrl.lastIndexOf('/') + 1)}}"
+                         alt="Фото категории" class="card-img-top w-100 d-block" width="100">
                     <div class="card-body text-center">
-                        <a class="btn btn-primary link-dark" href="#Гречишный"
+                        <a class="btn btn-primary link-dark" th:href="'#' + ${category.name}"
                            style="color: var(--bs-body-bg); background: rgba(0,123,255,0); border-style: none;">
-                            <h2>Гречишный мед</h2>
-                        </a>
-                    </div>
-                </div>
-                <div class="card" style="border-width: 0;">
-                    <img class="card-img-top w-100 d-block" src="/assets/img/IMG_2902.jpg">
-                    <div class="card-body text-center">
-                        <a class="btn btn-primary link-dark" href="#Разнотравье"
-                           style="color: var(--bs-body-bg); background: rgba(0,123,255,0); border-style: none;">
-                            <h2>Разнотравный мед</h2>
+                            <h2 th:text="${category.name}">Категория</h2>
                         </a>
                     </div>
                 </div>
@@ -75,8 +68,8 @@
         </div>
     </section>
 </div>
-<section style="margin-bottom: 150px;" th:each="entry : ${categorizedProducts}"
-         th:attr="id=${entry.key}">
+
+<section style="margin-bottom: 150px;" th:each="entry : ${categorizedProducts}" th:attr="id=${entry.key}">
     <div class="container">
         <h1 class="text-center" style="margin-bottom: 8px;" th:text="${entry.key}">Категория</h1>
     </div>
@@ -104,17 +97,14 @@
                     <div class="d-flex align-items-center my-3">
                         <button class="btn btn-outline-secondary decreaseBtn" type="button">-</button>
                         <label>
-                            <input type="number" class="form-control quantityInput mx-2" value="1" min="1" max="100"
-                                   step="1" style="width: 70px;">
+                            <input type="number" class="form-control quantityInput mx-2" value="1" min="1" max="100" step="1" style="width: 70px;">
                         </label>
                         <button class="btn btn-outline-secondary increaseBtn" type="button">+</button>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mt-2">
-                        <button class="btn btn-success" style="color: white;" onclick="showNotification()">В корзину
-                        </button>
-                        <a th:href="@{/products/{id}(id=${product.productId})}"
-                           class="ms-3 text-decoration-none fw-semibold" style="color: black;">Подробнее...</a>
+                        <button class="btn btn-success" style="color: white;" onclick="showNotification()">В корзину</button>
+                        <a th:href="@{/products/{id}(id=${product.productId})}" class="ms-3 text-decoration-none fw-semibold" style="color: black;">Подробнее...</a>
                     </div>
                 </div>
             </div>

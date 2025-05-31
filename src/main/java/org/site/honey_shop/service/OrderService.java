@@ -90,7 +90,7 @@ public class OrderService {
         }
 
         order.setOrderItems(orderItems);
-        log.info("Attempt to save order: {}", order.getOrderId());
+        log.info("Attempt to saveCategoryWithImage order: {}", order.getOrderId());
         order = orderRepository.save(order);
         orderEventPublisher.publishOrderCreatedEvent(" на сумму " + order.getTotalOrderAmount() + " руб.");
         log.info("Order saved: {}", order.getOrderId());
@@ -102,12 +102,12 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
         existingOrder.setOrderStatus(order.getOrderStatus());
         existingOrder.setPaymentStatus(order.getPayment().getPaymentStatus());
-        log.info("Attempt to update order: {}", existingOrder);
+        log.info("Attempt to updateCategoryName order: {}", existingOrder);
         return orderRepository.save(existingOrder);
     }
 
     public void delete(UUID orderId) {
-        log.info("Attempt to delete order: {}", orderId);
+        log.info("Attempt to deleteCategory order: {}", orderId);
         orderRepository.deleteById(orderId);
         log.info("Order deleted: {}", orderId);
     }
@@ -116,7 +116,7 @@ public class OrderService {
         Order existingOrder = orderRepository.findById(order.getOrderId())
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
         existingOrder.setOrderStatus(orderStatus);
-        log.info("Attempt to update order status for order: {}", existingOrder);
+        log.info("Attempt to updateCategoryName order status for order: {}", existingOrder);
         return orderRepository.save(existingOrder);
     }
 
@@ -124,7 +124,7 @@ public class OrderService {
         Order existingOrder = orderRepository.findById(order.getOrderId())
                 .orElseThrow(() -> new EntityNotFoundException("Order not found"));
         existingOrder.setPaymentStatus(orderPaymentStatus);
-        log.info("Attempt to update order payment status for order: {}", existingOrder);
+        log.info("Attempt to updateCategoryName order payment status for order: {}", existingOrder);
         return orderRepository.save(existingOrder);
     }
 }

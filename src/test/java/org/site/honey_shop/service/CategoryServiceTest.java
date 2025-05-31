@@ -29,13 +29,13 @@ class CategoryServiceTest {
     private final String newCategoryName = "Разнотравье";
 
     @Test
-    void testSave_NewCategory_Success() {
+    void testSave_CategoryWithImage_NewCategory_Success() {
         when(categoryRepository.existsByName(newCategoryName)).thenReturn(false);
 
         Category savedCategory = Category.builder().name(newCategoryName).build();
         when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
 
-        Category result = categoryService.save(newCategoryName);
+        Category result = categoryService.saveCategoryByName(newCategoryName);
 
         assertEquals(newCategoryName, result.getName());
         verify(categoryRepository).existsByName(newCategoryName);
@@ -43,12 +43,12 @@ class CategoryServiceTest {
     }
 
     @Test
-    void testSave_ExistingCategory_ThrowsException() {
+    void testSave_CategoryWithImage_ExistingCategory_ThrowsException() {
         when(categoryRepository.existsByName(existingCategoryName)).thenReturn(true);
 
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> categoryService.save(existingCategoryName)
+                () -> categoryService.saveCategoryByName(existingCategoryName)
         );
 
         assertEquals("Категория с таким названием уже существует!", exception.getMessage());

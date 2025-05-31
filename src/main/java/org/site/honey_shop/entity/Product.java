@@ -80,6 +80,12 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Column(name = "show_in_showcase", nullable = false)
+    private boolean showInShowcase = false;
+
+    @Column(name = "showcase_order")
+    private Integer showcaseOrder;
+
     @CreationTimestamp
     @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;

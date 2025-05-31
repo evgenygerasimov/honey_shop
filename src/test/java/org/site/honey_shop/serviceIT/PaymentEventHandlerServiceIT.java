@@ -201,7 +201,7 @@ class PaymentEventHandlerServiceIT extends TestContainerConfig {
     }
 
     private Product createSampleProduct() {
-        Category honeyCategory = categoryService.save("Мёд");
+        Category honeyCategory = categoryService.saveCategoryByName("Мёд");
         Product product = Product.builder()
                 .name("Продукт 1")
                 .description("Описание продукта")

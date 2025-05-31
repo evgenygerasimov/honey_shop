@@ -13,4 +13,8 @@
     <include file="/db/changelog/007_create_order_items.xml"/>
     <include file="/db/changelog/008_create_tokens.xml"/>
     <include file="/db/changelog/009_create_authorities.xml"/>
+    <include file="/db/changelog/010-alter-categories-table.xml"/>
+    <include file="/db/changelog/011-alter-products-table.xml"/>
+    <include file="db/changelog/012-alter-categories-table.xml"/>
+    <include file="db/changelog/013-alter-products-table.xml"/>
 </databaseChangeLog>

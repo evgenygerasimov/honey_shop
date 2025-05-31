@@ -17,7 +17,7 @@
     </h2>
 
 
-    <form th:action="@{/categories}" method="post" th:object="${category}">
+    <form th:action="@{/categories/create-with-image}" method="post" th:object="${category}" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="categoryName" class="form-label">Название категории</label>
             <input type="text" class="form-control" id="categoryName" th:field="*{name}">
@@ -28,7 +28,21 @@
         <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
             <p th:text="${errorMessage}">Ошибка</p>
         </div>
-        <button type="submit" class="btn btn-primary">Создать категорию</button>
+
+        <div class="mb-3">
+            <label for="visible" class="form-label">Видимость на главной странице:</label>
+            <input type="hidden" name="_visible" value="off" />
+            <input type="checkbox" id="visible" name="visible" th:field="*{visible}" />
+            <div class="form-text">Если флажок установлен, то категория будет видна в каталоге.</div>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="image" class="form-label">Фото:</label>
+            <input type="file" id="image" name="image" class="form-control-file">
+        </div>
+
+        <button type="submit" class="btn btn-secondary">Создать категорию</button>
     </form>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

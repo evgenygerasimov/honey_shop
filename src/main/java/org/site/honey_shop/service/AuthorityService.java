@@ -15,7 +15,7 @@ public class AuthorityService {
     private final AuthorityRepository authorityRepository;
 
     public Authority save(Authority authority) {
-        log.info("Attempt to save authority: {}", authority.getAuthority());
+        log.info("Attempt to saveCategoryWithImage authority: {}", authority.getAuthority());
         return authorityRepository.save(authority);
     }
 

@@ -133,8 +133,8 @@ public class ProductController {
         if (file.exists()) {
             boolean isDeleted = file.delete();
             if (!isDeleted) {
-                System.out.println("Failed to delete file: " + file.getAbsolutePath());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete file");
+                System.out.println("Failed to deleteCategory file: " + file.getAbsolutePath());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to deleteCategory file");
             }
         }
         productService.removeImageFromProduct(UUID.fromString(productId), imageFilename);

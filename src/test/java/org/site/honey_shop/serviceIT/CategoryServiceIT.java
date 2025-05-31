@@ -31,8 +31,8 @@ class CategoryServiceIT extends TestContainerConfig {
     }
 
     @Test
-    void testSaveCategory_success() {
-        Category category = categoryService.save("Мёд");
+    void testSaveCategoryWithImageCategory_success() {
+        Category category = categoryService.saveCategoryByName("Мёд");
 
         assertThat(category.getCategoryId()).isNotNull();
         assertThat(category.getName()).isEqualTo("Мёд");
@@ -43,18 +43,18 @@ class CategoryServiceIT extends TestContainerConfig {
     }
 
     @Test
-    void testSaveCategory_duplicateName_throwsException() {
-        categoryService.save("Мёд");
+    void testSaveCategoryWithImageCategory_duplicateName_throwsException() {
+        categoryService.saveCategoryByName("Мёд");
 
-        assertThatThrownBy(() -> categoryService.save("Мёд"))
+        assertThatThrownBy(() -> categoryService.saveCategoryByName("Мёд"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Категория с таким названием уже существует!");
     }
 
     @Test
     void testFindAllCategories() {
-        categoryService.save("Мёд");
-        categoryService.save("Пыльца");
+        categoryService.saveCategoryByName("Мёд");
+        categoryService.saveCategoryByName("Пыльца");
 
         List<Category> categories = categoryService.findAll();
 
@@ -66,7 +66,7 @@ class CategoryServiceIT extends TestContainerConfig {
 
     @Test
     void testFindByName_existingCategory() {
-        categoryService.save("Прополис");
+        categoryService.saveCategoryByName("Прополис");
 
         Category category = categoryService.findByName("Прополис");
 

@@ -36,9 +36,12 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
-        log.info("Get all products group by category and sort by price.");
+        log.info("Get all products grouped by category and sorted by price.");
+
         List<Product> productList = productRepository.findAll();
+
         Map<Category, List<Product>> groupedByCategory = productList.stream()
+                .filter(product -> product.getCategory() != null)
                 .collect(Collectors.groupingBy(
                         Product::getCategory,
                         Collectors.collectingAndThen(
@@ -48,12 +51,22 @@ public class ProductService {
                                         .collect(Collectors.toList())
                         )
                 ));
+
         List<Product> sortedProductList = new ArrayList<>();
+
         for (Category category : groupedByCategory.keySet()) {
             sortedProductList.addAll(groupedByCategory.get(category));
         }
+
+        List<Product> uncategorized = productList.stream()
+                .filter(product -> product.getCategory() == null)
+                .sorted(Comparator.comparing(Product::getPrice).reversed())
+                .toList();
+        sortedProductList.addAll(uncategorized);
+
         return sortedProductList;
     }
+
 
     public void createProduct(Product product, List<MultipartFile> pictures, String imageOrder) {
         Category category = categoryService.findByName(product.getCategory().getName());

@@ -56,7 +56,8 @@
             <td th:text="${product.height}"></td>
             <td th:text="${product.weight}"></td>
             <td th:text="${product.stockQuantity}"></td>
-            <td th:text="${product.category.name}"></td>
+            <td th:text="${product.category != null ? product.category.name : 'Без категории'}"></td>
+
             <td>
                 <div class="d-flex gap-1">
                     <form th:action="@{/products/edit_form/{productId}(productId=${product.productId})}" method="get">

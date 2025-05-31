@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Управление витриной</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        .category-item {
+            cursor: grab;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .products {
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .product-item {
+            cursor: grab;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sortable-ghost {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Управленией витриной</h2>
+        <div class="d-flex gap-2">
+            <form th:action="@{/users/{userId}(userId=${userId})}" method="get">
+                <button type="submit" class="btn btn-light btn-sm">Моя страница</button>
+            </form>
+            <form th:action="@{/products/new}" method="get">
+                <button type="submit" class="btn btn-light btn-sm">Создать товар</button>
+            </form>
+            <form th:action="@{/categories/new}" method="get">
+                <button type="submit" class="btn btn-light btn-sm">Создать категорию</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="categories">
+        <div th:each="entry : ${categoryProductsMap.entrySet()}"
+             class="category-item"
+             th:attr="data-category-id=${entry.key.categoryId}">
+            <h4 th:text="${entry.key.name}" class="mb-3"></h4>
+
+            <div class="products" th:attr="data-category-id=${entry.key.categoryId}">
+                <div th:each="product : ${entry.value}"
+                     class="product-item"
+                     th:attr="data-product-id=${product.productId}">
+                    <span th:text="${product.name}">Product Name</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button id="saveOrderBtn" class="btn btn-secondary">Сохранить порядок</button>
+    </div>
+</div>
+
+<script>
+    // Сортировка категорий
+    const categoriesContainer = document.getElementById('categories');
+    new Sortable(categoriesContainer, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        handle: '.category-item',
+    });
+
+    // Сортировка продуктов в каждой категории
+    document.querySelectorAll('.products').forEach(productsEl => {
+        new Sortable(productsEl, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            handle: '.product-item',
+        });
+    });
+
+    // Сохранение порядка
+    document.getElementById('saveOrderBtn').addEventListener('click', () => {
+        const categoryOrder = [];
+        const productOrder = {};
+
+        categoriesContainer.querySelectorAll('.category-item').forEach(catEl => {
+            const catId = catEl.getAttribute('data-category-id');
+            categoryOrder.push(catId);
+
+            const products = [];
+            catEl.querySelectorAll('.product-item').forEach(prodEl => {
+                products.push(prodEl.getAttribute('data-product-id'));
+            });
+            productOrder[catId] = products;
+        });
+
+        fetch('/showcase/reorder', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({categoryOrder, productOrder})
+        }).then(response => {
+            if (response.ok) {
+                alert('Порядок сохранён!');
+            } else {
+                alert('Ошибка сохранения порядка!');
+            }
+        }).catch(() => alert('Ошибка сети!'));
+    });
+</script>
+</body>
+</html>

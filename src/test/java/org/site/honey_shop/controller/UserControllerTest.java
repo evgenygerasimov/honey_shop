@@ -196,7 +196,7 @@ class UserControllerTest {
     @Test
     void testDeleteUser_withException() throws Exception {
         UUID userId = UUID.randomUUID();
-        doThrow(new MyAuthenticationException("You cannot delete yourself")).when(userService).delete(userId);
+        doThrow(new MyAuthenticationException("You cannot deleteCategory yourself")).when(userService).delete(userId);
 
         mockMvc.perform(post("/users/delete/{userId}", userId))
                 .andExpect(status().is3xxRedirection())

@@ -43,6 +43,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(request -> request.requestMatchers("/cart").hasAnyRole("SUPER_ADMIN", "ADMIN"))
                 .authorizeHttpRequests(request ->
                         request.anyRequest().permitAll()
                 )

@@ -83,7 +83,7 @@ class CategoryControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/products"));
 
-        verify(categoryService, times(1)).save("New Category");
+        verify(categoryService, times(1)).saveCategoryByName("New Category");
     }
 
     @Test
@@ -104,7 +104,7 @@ class CategoryControllerTest {
                 .thenReturn(user);
 
         doThrow(new IllegalArgumentException("Category already exists"))
-                .when(categoryService).save("Existing Category");
+                .when(categoryService).saveCategoryByName("Existing Category");
 
         mockMvc.perform(post("/categories")
                         .param("name", "Existing Category"))

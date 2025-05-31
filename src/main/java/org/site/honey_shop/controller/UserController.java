@@ -129,8 +129,8 @@ public class UserController {
         if (file.exists()) {
             boolean isDeleted = file.delete();
             if (!isDeleted) {
-                System.out.println("Failed to delete file: " + file.getAbsolutePath());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete file");
+                System.out.println("Failed to deleteCategory file: " + file.getAbsolutePath());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to deleteCategory file");
             }
         }
         userService.removeImageFromUserProfile(UUID.fromString(userId));

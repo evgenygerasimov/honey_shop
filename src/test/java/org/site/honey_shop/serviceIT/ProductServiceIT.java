@@ -49,7 +49,7 @@ class ProductServiceIT extends TestContainerConfig {
     void setUp() {
         productRepository.deleteAll();
         categoryRepository.deleteAll();
-        honeyCategory = categoryService.save("Мёд");
+        honeyCategory = categoryService.saveCategoryByName("Мёд");
     }
 
     private Product buildSampleProduct() {

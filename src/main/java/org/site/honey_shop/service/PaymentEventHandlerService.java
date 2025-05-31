@@ -33,8 +33,8 @@ public class PaymentEventHandlerService {
             paymentCashService.savePaymentSuccess(sessionId, true);
             log.info("Save payment success flag for sessionId={}", sessionId);
         } else {
-            log.warn("Metadata is null, skipping payment success update in handlePaymentSucceeded()");
-            throw new NullPointerException("Metadata is null, skipping payment success update in handlePaymentSucceeded()");
+            log.warn("Metadata is null, skipping payment success updateCategoryName in handlePaymentSucceeded()");
+            throw new NullPointerException("Metadata is null, skipping payment success updateCategoryName in handlePaymentSucceeded()");
         }
 
         extractOrderUuid(paymentData);
@@ -47,7 +47,7 @@ public class PaymentEventHandlerService {
 
         log.info("Find payment for order by id={}", extractOrderUuid(paymentData));
         Payment payment = paymentService.findById(order.getPayment().getPaymentId());
-        log.info("Payment with id={} found, update payment status.", payment.getPaymentId());
+        log.info("Payment with id={} found, updateCategoryName payment status.", payment.getPaymentId());
 
         payment.setPaymentStatus(PaymentStatus.SUCCESS);
         log.info("Update payment status successfully for payment id={}.", payment.getPaymentId());
@@ -77,7 +77,7 @@ public class PaymentEventHandlerService {
 
         log.info("Find payment for order by id={}", extractOrderUuid(paymentData));
         Payment payment = paymentService.findById(order.getPayment().getPaymentId());
-        log.info("Payment with id={} found, update payment status.", payment.getPaymentId());
+        log.info("Payment with id={} found, updateCategoryName payment status.", payment.getPaymentId());
 
         payment.setPaymentStatus(PaymentStatus.FAILED);
         log.info("Update status successfully for payment with id={}.", payment.getPaymentId());
@@ -101,7 +101,7 @@ public class PaymentEventHandlerService {
         log.info("Find payment for order by id={}", extractOrderUuid(paymentData));
         Payment payment = paymentService.findById(order.getPayment().getPaymentId());
 
-        log.info("Payment with id={} found, update payment status.", payment.getPaymentId());
+        log.info("Payment with id={} found, updateCategoryName payment status.", payment.getPaymentId());
         payment.setPaymentStatus(PaymentStatus.REFUNDED);
         log.info("Update payment status successfully.");
         paymentService.update(payment);

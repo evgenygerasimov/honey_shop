@@ -137,7 +137,7 @@ public class UserService {
 
     public void delete(UUID userId) {
         if (userId.toString().equals(getCurrentUserId())){
-            log.info("Attempting to delete self profile by user: {}", userId);
+            log.info("Attempting to deleteCategory self profile by user: {}", userId);
             throw new MyAuthenticationException("Вы не можете удалить свой профиль!");
         }
         User user = userRepository.findById(userId)

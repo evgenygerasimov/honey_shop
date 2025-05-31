@@ -87,14 +87,14 @@ public class CdekCacheService {
                 log.info("Update CDEK cache completed successfully.");
                 return;
             } catch (TimeoutException e) {
-                log.error("Attempt {}: update timed out after {} minutes. Cancelling...", attempt, timeoutMinutes);
+                log.error("Attempt {}: updateCategoryName timed out after {} minutes. Cancelling...", attempt, timeoutMinutes);
                 future.cancel(true);
             } catch (Exception e) {
-                log.error("Attempt {}: error during cache update", attempt, e);
+                log.error("Attempt {}: error during cache updateCategoryName", attempt, e);
             }
 
             if (attempt < maxRetries) {
-                log.warn("Retrying update in {} seconds...", retryDelayMs / 1000);
+                log.warn("Retrying updateCategoryName in {} seconds...", retryDelayMs / 1000);
                 sleep(retryDelayMs);
             } else {
                 log.error("Update CDEK cache failed after {} attempts.", maxRetries);
