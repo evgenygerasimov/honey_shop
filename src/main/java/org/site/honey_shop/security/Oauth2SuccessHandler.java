@@ -46,7 +46,7 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
         invalidateExpiredToken(userTokens, username);
 
         UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
-                username,
+                userDetails,
                 null,
                 userDetails.getAuthorities()
         );
@@ -97,7 +97,7 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
                 addTokensToCookie(response, token.getAccessToken(), token.getRefreshToken());
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken(
-                                username,
+                                userDetails,
                                 null,
                                 userDetails.getAuthorities())
                 );

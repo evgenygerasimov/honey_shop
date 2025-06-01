@@ -1,6 +1,7 @@
 package org.site.honey_shop.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.repository.CategoryRepository;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShowcaseService {
@@ -20,10 +22,12 @@ public class ShowcaseService {
 
 
     public List<Category> getShowcase() {
+        log.info("Getting showcase category list.");
         return categoryRepository.findAllByOrderByShowcaseOrderAsc();
     }
 
     public void reorder(List<UUID> categoryOrder, Map<UUID, List<UUID>> productOrder) {
+        log.info("Reordering categories and products.");
         for (int i = 0; i < categoryOrder.size(); i++) {
             var category = categoryRepository.findById(categoryOrder.get(i)).orElseThrow();
             category.setShowcaseOrder(i);

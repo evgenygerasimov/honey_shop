@@ -11,7 +11,6 @@ import org.site.honey_shop.service.ProductService;
 import org.site.honey_shop.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +33,6 @@ public class ProductController {
     private final CategoryService categoryService;
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping
     public String listProducts(Model model) {
         model.addAttribute("userId", getCurrentUserId());
@@ -48,7 +46,6 @@ public class ProductController {
         return "product-data";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping("/new")
     public String createProduct(Model model, Principal principal) {
         addAttributesToModel(model, principal);
@@ -57,7 +54,6 @@ public class ProductController {
         return "add-product";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping
     public String saveProduct(
             @Valid @ModelAttribute Product product,
@@ -80,7 +76,6 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping("/edit_form/{productId}")
     public String updateProductForm(@PathVariable("productId") UUID productId, Model model, Principal principal) {
         addAttributesToModel(model, principal);
@@ -89,7 +84,6 @@ public class ProductController {
         return "edit-product";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/edit")
     public String updateProduct(@Valid @ModelAttribute Product product,
                                 BindingResult bindingResult,
@@ -112,7 +106,6 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/delete/{productId}")
     public String deleteProduct(@PathVariable UUID productId, RedirectAttributes redirectAttributes) {
         try {
@@ -125,7 +118,6 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/delete-image")
     public ResponseEntity<String> deleteImage(@RequestParam("imageFilename") String imageFilename,
                                               @RequestParam("productId") String productId) {

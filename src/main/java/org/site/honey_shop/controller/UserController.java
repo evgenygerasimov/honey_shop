@@ -12,7 +12,6 @@ import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +32,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @GetMapping("/list")
     public String showUserList(Model model, HttpServletRequest request) {
         accessDeniedProcessing(request, model);
@@ -41,7 +39,6 @@ public class UserController {
         return "all-users";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @GetMapping
     public String showCreateUserForm(Model model) {
         if (!model.containsAttribute("user")) {
@@ -50,7 +47,6 @@ public class UserController {
         return "add-user";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @PostMapping
     public String createUser(@Validated(OnCreate.class) @ModelAttribute User user,
                              BindingResult bindingResult,
@@ -69,7 +65,6 @@ public class UserController {
         return "redirect:/users/" + user.getUserId();
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping("/{userId}")
     public String showUserData(@PathVariable("userId") UUID userId, HttpServletRequest request, Model model) {
         accessDeniedProcessing(request, model);
@@ -78,7 +73,6 @@ public class UserController {
         return "user-data";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping("/edit_form/{userId}")
     public String showUserEditForm(@PathVariable("userId") UUID userId,
                                    Model model,
@@ -87,7 +81,6 @@ public class UserController {
         return "edit-user";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/edit")
     public String updateUser(@Validated(OnUpdate.class) @ModelAttribute User user,
                              BindingResult bindingResult,
@@ -109,7 +102,6 @@ public class UserController {
         return "redirect:/users/" + user.getUserId();
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @PostMapping("/delete/{userId}")
     public String deleteUser(@PathVariable("userId") UUID deletingUserId, RedirectAttributes redirectAttributes) {
         try {
@@ -121,7 +113,6 @@ public class UserController {
         return "redirect:/users/list";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @PostMapping("/delete-image")
     public ResponseEntity<String> deleteImage(@RequestParam("imageFilename") String imageFilename,
                                               @RequestParam("userId") String userId) {

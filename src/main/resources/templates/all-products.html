@@ -63,7 +63,10 @@
                     <form th:action="@{/products/edit_form/{productId}(productId=${product.productId})}" method="get">
                         <button type="submit" class="btn btn-secondary">Редактировать</button>
                     </form>
-                    <form th:action="@{/products/delete/{productId}(productId=${product.productId})}" method="post">
+                    <form th:action="@{/products/delete/{productId}(productId=${product.productId})}"
+                          method="post"
+                          onsubmit="return confirm('Удалить этот товар?');"
+                          class="d-inline">
                         <button type="submit" class="btn btn-secondary">Удалить</button>
                     </form>
                 </div>

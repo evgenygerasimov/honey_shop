@@ -112,10 +112,8 @@ public class AuthService {
         refreshTokeCookie.setMaxAge(0);
         response.addCookie(refreshTokeCookie);
 
-        // 🧹 Сбрасываем авторизацию
         SecurityContextHolder.clearContext();
 
-        // 🧼 Инвалидируем HTTP-сессию
         request.getSession().invalidate();
     }
 }

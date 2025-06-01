@@ -7,7 +7,6 @@ import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,15 +26,13 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping
     public String showCategories(Model model) {
         model.addAttribute("userId", getCurrentUserId());
         model.addAttribute("categories", categoryService.findAll());
-        return "categories";
+        return "all-categories";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping("/new")
     public String showCategoryForm(Model model) {
         model.addAttribute("userId", getCurrentUserId());
@@ -43,7 +40,6 @@ public class CategoryController {
         return "add-category";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping
     public String createCategoryByName(@Valid @ModelAttribute Category category,
                                        BindingResult result,
@@ -62,7 +58,6 @@ public class CategoryController {
         return "redirect:/categories";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/create-with-image")
     public String fullCreateCategory(@Valid @ModelAttribute Category category,
                                      BindingResult result,
@@ -93,7 +88,6 @@ public class CategoryController {
         return "redirect:/categories";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @GetMapping("/edit/{id}")
     public String showEditCategoryForm(@PathVariable UUID id, Model model) {
         model.addAttribute("userId", getCurrentUserId());
@@ -109,14 +103,12 @@ public class CategoryController {
         return "redirect:/categories";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/delete/{id}")
     public String deleteCategory(@PathVariable UUID id) {
         categoryService.deleteCategory(id);
         return "redirect:/categories";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @PostMapping("/delete-image")
     public ResponseEntity<String> deleteImage(@RequestParam("imageFilename") String imageFilename,
                                               @RequestParam("categoryId") String categoryId) {
@@ -128,7 +120,7 @@ public class CategoryController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to deleteCategory file");
             }
         }
-        categoryService.removeImageFromUserProfile(UUID.fromString(categoryId));
+        categoryService.removeImageFromCategory(UUID.fromString(categoryId));
         return ResponseEntity.ok("Photo from category was deleted successfully.");
     }
 

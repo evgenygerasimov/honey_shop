@@ -27,15 +27,18 @@ public class PaymentEventHandlerFacade {
 
             switch (event) {
                 case "payment.succeeded":
-                    log.info("Retrieved information about succeeded payment for order: {}", root.path("object").path("description").asText());
+                    log.info("Retrieved information about succeeded payment for order: {}",
+                            root.path("object").path("description").asText());
                     paymentEventHandlerService.handlePaymentSucceeded(paymentData);
                     break;
                 case "payment.canceled":
-                    log.info("Retrieved information about canceled payment for order: {}", root.path("object").path("description").asText());
+                    log.info("Retrieved information about canceled payment for order: {}",
+                            root.path("object").path("description").asText());
                     paymentEventHandlerService.handlePaymentCanceled(paymentData);
                     break;
                 case "refund.succeeded":
-                    log.info("Retrieved information about refund succeeded payment for order: {}", root.path("object").path("description").asText());
+                    log.info("Retrieved information about refund succeeded payment for order: {}",
+                            root.path("object").path("description").asText());
                     paymentEventHandlerService.handleRefundSucceeded(paymentData);
                     break;
                 default:

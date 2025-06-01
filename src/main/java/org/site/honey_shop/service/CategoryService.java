@@ -10,7 +10,6 @@ import org.site.honey_shop.repository.CategoryRepository;
 import org.site.honey_shop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +38,7 @@ public class CategoryService {
         Category category = Category.builder()
                 .name(categoryName)
                 .build();
-        log.info("Attempt to saveCategoryWithImage category: {}", categoryName);
+        log.info("Attempt to save category by name: {}", categoryName);
         return categoryRepository.save(category);
     }
 
@@ -53,11 +52,11 @@ public class CategoryService {
                 .imageUrl(imageUrl)
                 .visible(category.getVisible())
                 .build();
+        log.info("Attempt to save category: {}", category.getName());
         return categoryRepository.save(category);
     }
 
     public Category updateCategoryName(Category category) {
-        log.info("Update category: {}", category.getName());
         Category existCategory = categoryRepository.findById(category.getCategoryId()).orElseThrow(()
                 -> new IllegalArgumentException("Category not found"));
         existCategory.setName(category.getName());
@@ -74,6 +73,7 @@ public class CategoryService {
             existCategory.setImageUrl(imageUrl);
         }
         existCategory.setVisible(category.getVisible());
+        log.info("Full update category: {}", category.getName());
         return categoryRepository.save(existCategory);
     }
 
@@ -104,9 +104,10 @@ public class CategoryService {
         List<Product> products = productRepository.findAllByCategory(category);
         for (Product product : products) {
             product.setCategory(null);
+            log.info("Set category of product {} to null", product.getName());
         }
         productRepository.saveAll(products);
-
+        log.info("Delete category: {}", category.getName());
         categoryRepository.delete(category);
     }
 
@@ -129,7 +130,7 @@ public class CategoryService {
         return imagUrl;
     }
 
-    public boolean removeImageFromUserProfile(UUID categoryId) {
+    public boolean removeImageFromCategory(UUID categoryId) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         category.setImageUrl(null);
         categoryRepository.save(category);

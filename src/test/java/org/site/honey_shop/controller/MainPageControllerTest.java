@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.site.honey_shop.entity.Order;
-import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.service.MainPageService;
 import org.site.honey_shop.service.PaymentCashService;
 import org.springframework.mock.web.MockHttpSession;
@@ -14,15 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import java.util.List;
-import java.util.Map;
-
 import static org.hamcrest.Matchers.instanceOf;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class AppControllerTest {
+class MainPageControllerTest {
 
     private MockMvc mockMvc;
 
@@ -33,7 +28,7 @@ class AppControllerTest {
     private PaymentCashService paymentCashService;
 
     @InjectMocks
-    private AppController appController;
+    private MainPageController mainPageController;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +39,7 @@ class AppControllerTest {
         viewResolver.setSuffix(".html");
 
         mockMvc = MockMvcBuilders
-                .standaloneSetup(appController)
+                .standaloneSetup(mainPageController)
                 .setViewResolvers(viewResolver)
                 .build();
     }

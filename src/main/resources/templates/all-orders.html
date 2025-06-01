@@ -21,6 +21,7 @@
             <th scope="col">Статус оплаты</th>
             <th scope="col">Адрес доставки</th>
             <th scope="col">Тип доставки</th>
+            <th scope="col">Сумма заказа</th>
             <th scope="col">Действия</th>
         </tr>
         </thead>
@@ -50,17 +51,21 @@
                 <select class="form-select" name="orderPaymentStatus" onchange="this.form.submit()">
                     <option value="PENDING" th:selected="${order.paymentStatus == 'PENDING'}">Ожидается</option>
                     <option value="SUCCESS" th:selected="${order.paymentStatus == 'SUCCESS'}">Оплачено</option>
-                    <option value="FAILED" th:selected="${order.paymentStatus == 'FAILED'}">Ошибка</option>
+                    <option value="FAILED" th:selected="${order.paymentStatus == 'FAILED'}">Отменено</option>
                     <option value="REFUNDED" th:selected="${order.paymentStatus == 'REFUNDED'}">Возврат</option>
                 </select>
                 </form>
             </td>
             <td th:text="${order.deliveryAddress}"></td>
             <td th:text="${order.deliveryType}"></td>
+            <td th:text="${order.getTotalOrderAmount()}"></td>
             <td>
                 <div class="d-flex gap-1">
                     <a th:href="@{/orders/{orderId}(orderId=${order.orderId})}" class="btn btn-secondary">Просмотр</a>
-                    <form th:action="@{/orders/delete/{orderId}(orderId=${order.orderId})}" method="post">
+                    <form th:action="@{/orders/delete/{orderId}(orderId=${order.orderId})}"
+                          method="post"
+                          onsubmit="return confirm('Удалить этот заказ?');"
+                          class="d-inline">
                         <button type="submit" class="btn btn-secondary">Удалить</button>
                     </form>
                 </div>

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.exception.DeleteProductException;
+import org.site.honey_shop.exception.OrderCreateException;
 import org.site.honey_shop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,6 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
-        log.info("Get all products grouped by category and sorted by price.");
-
         List<Product> productList = productRepository.findAll();
 
         Map<Category, List<Product>> groupedByCategory = productList.stream()
@@ -64,6 +63,7 @@ public class ProductService {
                 .toList();
         sortedProductList.addAll(uncategorized);
 
+        log.info("Get all products grouped by category and sorted by price.");
         return sortedProductList;
     }
 
@@ -180,20 +180,28 @@ public class ProductService {
         }
     }
 
-        public void removeImageFromProduct (UUID productId, String imageFilename){
-            Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found!"));
-            product.getImages().remove(imageFilename);
-            productRepository.save(product);
-        }
-
-        public void updateStockForReduction (Product product,int quantity){
-            product.setStockQuantity(product.getStockQuantity() - quantity);
-            productRepository.save(product);
-        }
-
-        public void updateStockForAddition (Product product,int quantity){
-            product.setStockQuantity(product.getStockQuantity() + quantity);
-            productRepository.save(product);
-        }
+    public void removeImageFromProduct(UUID productId, String imageFilename) {
+        Product product = productRepository.findById(productId).orElseThrow(()
+                -> new RuntimeException("Product not found!"));
+        product.getImages().remove(imageFilename);
+        log.info("Remove image from product: {}", product.getProductId());
+        productRepository.save(product);
     }
+
+    public void updateStockForReduction(Product product, int quantity) {
+        if (product.getStockQuantity() < quantity) {
+            throw new OrderCreateException("Недостаточно остатков товара: " + product.getName() + " для создания заказа.");
+        } else {
+            product.setStockQuantity(product.getStockQuantity() - quantity);
+        }
+        log.info("Update stock for reduction: {}", product.getName());
+        productRepository.save(product);
+    }
+
+    public void updateStockForAddition(Product product, int quantity) {
+        product.setStockQuantity(product.getStockQuantity() + quantity);
+        log.info("Update stock for addition: {}", product.getName());
+        productRepository.save(product);
+    }
+}
 

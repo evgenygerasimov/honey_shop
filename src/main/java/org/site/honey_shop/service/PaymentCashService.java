@@ -18,7 +18,6 @@ public class PaymentCashService {
     private static final Duration EXPIRATION_TIME = Duration.ofDays(7);
 
     public void savePaymentSuccess(String sessionId, boolean success) {
-        log.info("Saving payment flag={} for session id:{}  ",  success, sessionId);
         redisTemplate.opsForValue().set(PAYMENT_SUCCESS_KEY + ":" + sessionId, String.valueOf(success), EXPIRATION_TIME);
         log.info("Payment flag={} saved for session id:{}  ", success, sessionId);
     }
@@ -29,7 +28,6 @@ public class PaymentCashService {
     }
 
     public void setPaymentSuccess(String sessionId, boolean success) {
-        log.info("Setting payment flag={} for session id:{}", success, sessionId);
         redisTemplate.opsForValue().set(PAYMENT_SUCCESS_KEY + ":" + sessionId, String.valueOf(success));
         log.info("Payment flag={} set for session id:{}", success, sessionId);
     }

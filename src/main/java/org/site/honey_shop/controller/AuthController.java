@@ -9,7 +9,6 @@ import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.service.AuthService;
 import org.site.honey_shop.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -44,7 +43,6 @@ public class AuthController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/logout")
     public String logout(@CookieValue(name = "access_token", required = false) String accessToken,
                          HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {

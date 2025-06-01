@@ -11,11 +11,13 @@
     <h2 class="mt-5 d-flex justify-content-between">
         Пользователи
         <div class="d-flex gap-1">
-            <div>
                 <form th:action="@{/users/{userId}(userId=${authUserId})}" method="get">
                     <button type="submit" class="btn btn-light">Моя страница</button>
                 </form>
-            </div>
+                <form th:action="@{/users}" method="get"
+                      th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
+                    <button type="submit" class="btn btn-light">Добавить нового пользователя</button>
+                </form>
         </div>
     </h2>
     <table class="table">
@@ -40,7 +42,10 @@
                           th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
                         <button type="submit" class="btn btn-secondary">Редактировать</button>
                     </form>
-                    <form th:action="@{/users/delete/{userId}(userId=${user.userId()})}" method="post"
+                    <form th:action="@{/users/delete/{userId}(userId=${user.userId()})}"
+                          method="post"
+                          onsubmit="return confirm('Удалить этого пользователя?');"
+                          class="d-inline"
                           th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')') and user.userId() != authUserId}">
                         <button type="submit" class="btn btn-secondary">Удалить</button>
                     </form>

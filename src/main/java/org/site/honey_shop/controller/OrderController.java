@@ -8,7 +8,6 @@ import org.site.honey_shop.entity.*;
 import org.site.honey_shop.exception.OrderCreateException;
 import org.site.honey_shop.service.OrderService;
 import org.site.honey_shop.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,7 @@ public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")    @GetMapping("/{orderId}")
+    @GetMapping("/{orderId}")
     public String order(@PathVariable UUID orderId, Model model) {
         OrderDTO order = orderService.findOrderDTOById(orderId);
 
@@ -47,7 +46,7 @@ public class OrderController {
         return "order-details";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")    @GetMapping
+    @GetMapping
     public String orders(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserResponseDTO user = userService.findByUsername(auth.getName());
@@ -78,7 +77,6 @@ public class OrderController {
 
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/update-order-status/{orderId}")
     public String updateOrder(@PathVariable String orderId,
                               @RequestParam OrderStatus orderStatus) {
@@ -86,7 +84,6 @@ public class OrderController {
         return "redirect:/orders";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/update-payment-status/{orderId}")
     public String updateOrder(@PathVariable String orderId,
                               @RequestParam PaymentStatus orderPaymentStatus) {
@@ -94,7 +91,6 @@ public class OrderController {
         return "redirect:/orders";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
     @PostMapping("/delete/{orderId}")
     public String deleteOrder(@PathVariable UUID orderId) {
         orderService.delete(orderId);
