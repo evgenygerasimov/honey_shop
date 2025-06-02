@@ -43,14 +43,13 @@ public class OrderController {
 
         model.addAttribute("order", order);
         model.addAttribute("productsMap", productsMap);
+        model.addAttribute("userId", getCurrentUserId());
         return "order-details";
     }
 
     @GetMapping
     public String orders(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserResponseDTO user = userService.findByUsername(auth.getName());
-        model.addAttribute("userId", user.userId());
+        model.addAttribute("userId", getCurrentUserId());
         model.addAttribute("orders", orderService.findAll());
         return "all-orders";
     }
@@ -95,5 +94,11 @@ public class OrderController {
     public String deleteOrder(@PathVariable UUID orderId) {
         orderService.delete(orderId);
         return "redirect:/orders";
+    }
+
+    private String getCurrentUserId() {
+        return userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .userId()
+                .toString();
     }
 }

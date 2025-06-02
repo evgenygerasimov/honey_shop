@@ -1,80 +1,259 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="ru" xmlns:th="http://www.thymeleaf.org">-->
+<!--<th:block th:replace="~{header-fragment :: common-head('Все заказы')}"></th:block>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <h2 class="mt-5 d-flex justify-content-between">Все заказы-->
+<!--        <div>-->
+<!--            <form th:action="@{/users/{userId}(userId=${userId})}" method="get">-->
+<!--                <button type="submit" class="btn btn-light">Моя страница</button>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </h2>-->
+<!--    <table class="table">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th scope="col">Дата и время заказа</th>-->
+<!--            <th scope="col">ФИО</th>-->
+<!--            <th scope="col">Телефон</th>-->
+<!--            <th scope="col">Электронная почта</th>-->
+<!--            <th scope="col">Статус заказа</th>-->
+<!--            <th scope="col">Статус оплаты</th>-->
+<!--            <th scope="col">Адрес доставки</th>-->
+<!--            <th scope="col">Тип доставки</th>-->
+<!--            <th scope="col">Сумма заказа</th>-->
+<!--            <th scope="col">Действия</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+
+<!--        <tr th:each="order : ${orders}">-->
+<!--            <td>-->
+<!--                <span th:text="${#temporals.format(order.createDate, 'yyyy-MM-dd')}"></span>/-->
+<!--                <span th:text="${#temporals.format(order.createDate, 'HH:mm:ss')}"></span>-->
+<!--            </td>-->
+<!--            <td th:text="${order.fullName}"></td>-->
+<!--            <td th:text="${order.customerPhone}"></td>-->
+<!--            <td th:text="${order.customerEmail}"></td>-->
+<!--            <td>-->
+<!--                <form th:action="@{/orders/update-order-status/{orderId}(orderId=${order.orderId})}" method="post" th:object="${order}">-->
+<!--                <select class="form-select" name="orderStatus" onchange="this.form.submit()">-->
+<!--                    <option value="PENDING" th:selected="${order.orderStatus == 'PENDING'}">В обработке</option>-->
+<!--                    <option value="PAID" th:selected="${order.orderStatus == 'PAID'}">Оплачен</option>-->
+<!--                    <option value="SHIPPED" th:selected="${order.orderStatus == 'SHIPPED'}">Отправлен</option>-->
+<!--                    <option value="DELIVERED" th:selected="${order.orderStatus == 'DELIVERED'}">Доставлен</option>-->
+<!--                    <option value="CANCELLED" th:selected="${order.orderStatus == 'CANCELLED'}">Отменён</option>-->
+<!--                </select>-->
+<!--                </form>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--                <form th:action="@{/orders/update-payment-status/{orderId}(orderId=${order.orderId})}" method="post" th:object="${order}">-->
+<!--                <select class="form-select" name="orderPaymentStatus" onchange="this.form.submit()">-->
+<!--                    <option value="PENDING" th:selected="${order.paymentStatus == 'PENDING'}">Ожидается</option>-->
+<!--                    <option value="SUCCESS" th:selected="${order.paymentStatus == 'SUCCESS'}">Оплачено</option>-->
+<!--                    <option value="FAILED" th:selected="${order.paymentStatus == 'FAILED'}">Отменено</option>-->
+<!--                    <option value="REFUNDED" th:selected="${order.paymentStatus == 'REFUNDED'}">Возврат</option>-->
+<!--                </select>-->
+<!--                </form>-->
+<!--            </td>-->
+<!--            <td th:text="${order.deliveryAddress}"></td>-->
+<!--            <td th:text="${order.deliveryType}"></td>-->
+<!--            <td th:text="${order.getTotalOrderAmount()}"></td>-->
+<!--            <td>-->
+<!--                <div class="d-flex gap-1">-->
+<!--                    <a th:href="@{/orders/{orderId}(orderId=${order.orderId})}" class="btn btn-secondary">Просмотр</a>-->
+<!--                    <form th:action="@{/orders/delete/{orderId}(orderId=${order.orderId})}"-->
+<!--                          method="post"-->
+<!--                          onsubmit="return confirm('Удалить этот заказ?');"-->
+<!--                          class="d-inline">-->
+<!--                        <button type="submit" class="btn btn-secondary">Удалить</button>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--<script src="/assets/bootstrap/js/bootstrap.min.js"></script>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{header-fragment :: common-head('Все заказы')}"></th:block>
+<head>
+    <meta charset="UTF-8" />
+    <title>Все заказы</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 240px;
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            border-right: 1px solid #dee2e6;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar form {
+            margin: 0;
+            width: 100%;
+        }
+        .sidebar button.btn-light {
+            width: 100%;
+            border-radius: 0;
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+            padding-left: 20px;
+            font-weight: 500;
+            color: #212529;
+            background-color: transparent;
+            transition: background-color 0.2s ease;
+        }
+        .sidebar button.btn-light:last-child {
+            border-bottom: none;
+        }
+        .sidebar button.btn-light:hover,
+        .sidebar button.btn-light:focus {
+            background-color: #e9ecef;
+            color: #000;
+            outline: none;
+            box-shadow: none;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
 <body>
-<div class="container">
-    <h2 class="mt-5 d-flex justify-content-between">Все заказы
-        <div>
-            <form th:action="@{/users/{userId}(userId=${userId})}" method="get">
-                <button type="submit" class="btn btn-light">Моя страница</button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/cart}">Корзина</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/checkout}">Оформление заказа</a></li>
+            </ul>
+            <form class="d-flex" th:action="@{/auth/logout}" method="post">
+                <button class="btn btn-outline-light" type="submit">Выход</button>
             </form>
         </div>
-    </h2>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Дата и время заказа</th>
-            <th scope="col">ФИО</th>
-            <th scope="col">Телефон</th>
-            <th scope="col">Электронная почта</th>
-            <th scope="col">Статус заказа</th>
-            <th scope="col">Статус оплаты</th>
-            <th scope="col">Адрес доставки</th>
-            <th scope="col">Тип доставки</th>
-            <th scope="col">Сумма заказа</th>
-            <th scope="col">Действия</th>
-        </tr>
-        </thead>
-        <tbody>
+    </div>
+</nav>
 
-        <tr th:each="order : ${orders}">
-            <td>
-                <span th:text="${#temporals.format(order.createDate, 'yyyy-MM-dd')}"></span>/
-                <span th:text="${#temporals.format(order.createDate, 'HH:mm:ss')}"></span>
-            </td>
-            <td th:text="${order.fullName}"></td>
-            <td th:text="${order.customerPhone}"></td>
-            <td th:text="${order.customerEmail}"></td>
-            <td>
-                <form th:action="@{/orders/update-order-status/{orderId}(orderId=${order.orderId})}" method="post" th:object="${order}">
-                <select class="form-select" name="orderStatus" onchange="this.form.submit()">
-                    <option value="PENDING" th:selected="${order.orderStatus == 'PENDING'}">В обработке</option>
-                    <option value="PAID" th:selected="${order.orderStatus == 'PAID'}">Оплачен</option>
-                    <option value="SHIPPED" th:selected="${order.orderStatus == 'SHIPPED'}">Отправлен</option>
-                    <option value="DELIVERED" th:selected="${order.orderStatus == 'DELIVERED'}">Доставлен</option>
-                    <option value="CANCELLED" th:selected="${order.orderStatus == 'CANCELLED'}">Отменён</option>
-                </select>
-                </form>
-            </td>
-            <td>
-                <form th:action="@{/orders/update-payment-status/{orderId}(orderId=${order.orderId})}" method="post" th:object="${order}">
-                <select class="form-select" name="orderPaymentStatus" onchange="this.form.submit()">
-                    <option value="PENDING" th:selected="${order.paymentStatus == 'PENDING'}">Ожидается</option>
-                    <option value="SUCCESS" th:selected="${order.paymentStatus == 'SUCCESS'}">Оплачено</option>
-                    <option value="FAILED" th:selected="${order.paymentStatus == 'FAILED'}">Отменено</option>
-                    <option value="REFUNDED" th:selected="${order.paymentStatus == 'REFUNDED'}">Возврат</option>
-                </select>
-                </form>
-            </td>
-            <td th:text="${order.deliveryAddress}"></td>
-            <td th:text="${order.deliveryType}"></td>
-            <td th:text="${order.getTotalOrderAmount()}"></td>
-            <td>
-                <div class="d-flex gap-1">
-                    <a th:href="@{/orders/{orderId}(orderId=${order.orderId})}" class="btn btn-secondary">Просмотр</a>
-                    <form th:action="@{/orders/delete/{orderId}(orderId=${order.orderId})}"
-                          method="post"
-                          onsubmit="return confirm('Удалить этот заказ?');"
-                          class="d-inline">
-                        <button type="submit" class="btn btn-secondary">Удалить</button>
+<div class="main-container">
+    <div class="sidebar">
+        <form th:action="@{/users/{userId}(userId=${userId})}" method="get">
+            <button type="submit" class="btn btn-light">Моя страница</button>
+        </form>
+        <form th:action="@{/products}" method="get">
+            <button type="submit" class="btn btn-light">Товары</button>
+        </form>
+        <form th:action="@{/categories}" method="get">
+            <button type="submit" class="btn btn-light">Категории</button>
+        </form>
+        <form th:action="@{/showcase}" method="get">
+            <button type="submit" class="btn btn-light">Управление витриной</button>
+        </form>
+        <form th:action="@{/orders}" method="get">
+            <button type="submit" class="btn btn-light">Заказы</button>
+        </form>
+        <form th:action="@{/users/list}" method="get"
+              th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
+            <button type="submit" class="btn btn-light">Пользователи</button>
+        </form>
+        <form th:action="@{/users}" method="get"
+              th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
+            <button type="submit" class="btn btn-light">Добавить пользователя</button>
+        </form>
+        <form th:action="@{/users/edit_form/{userId}(userId=${userId})}">
+            <button type="submit" class="btn btn-light">Редактировать профиль</button>
+        </form>
+        <form th:action="@{/analytics/}" method="get">
+            <button type="submit" class="btn btn-light">Аналитика</button>
+        </form>
+        <form th:action="@{/auth/logout}" method="post">
+            <button type="submit" class="btn btn-light">Выйти</button>
+        </form>
+    </div>
+
+    <div class="content">
+        <h2 class="mb-4">Все заказы</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Дата и время заказа</th>
+                <th>ФИО</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                <th>Статус заказа</th>
+                <th>Статус оплаты</th>
+                <th>Адрес доставки</th>
+                <th>Тип доставки</th>
+                <th>Сумма</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td>
+                    <span th:text="${#temporals.format(order.createDate, 'yyyy-MM-dd')}"></span> /
+                    <span th:text="${#temporals.format(order.createDate, 'HH:mm:ss')}"></span>
+                </td>
+                <td th:text="${order.fullName}"></td>
+                <td th:text="${order.customerPhone}"></td>
+                <td th:text="${order.customerEmail}"></td>
+                <td>
+                    <form th:action="@{/orders/update-order-status/{orderId}(orderId=${order.orderId})}" method="post">
+                        <select class="form-select" name="orderStatus" onchange="this.form.submit()">
+                            <option value="PENDING" th:selected="${order.orderStatus == 'PENDING'}">В обработке</option>
+                            <option value="PAID" th:selected="${order.orderStatus == 'PAID'}">Оплачен</option>
+                            <option value="SHIPPED" th:selected="${order.orderStatus == 'SHIPPED'}">Отправлен</option>
+                            <option value="DELIVERED" th:selected="${order.orderStatus == 'DELIVERED'}">Доставлен</option>
+                            <option value="CANCELLED" th:selected="${order.orderStatus == 'CANCELLED'}">Отменён</option>
+                        </select>
                     </form>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                </td>
+                <td>
+                    <form th:action="@{/orders/update-payment-status/{orderId}(orderId=${order.orderId})}" method="post">
+                        <select class="form-select" name="orderPaymentStatus" onchange="this.form.submit()">
+                            <option value="PENDING" th:selected="${order.paymentStatus == 'PENDING'}">Ожидается</option>
+                            <option value="SUCCESS" th:selected="${order.paymentStatus == 'SUCCESS'}">Оплачено</option>
+                            <option value="FAILED" th:selected="${order.paymentStatus == 'FAILED'}">Отменено</option>
+                            <option value="REFUNDED" th:selected="${order.paymentStatus == 'REFUNDED'}">Возврат</option>
+                        </select>
+                    </form>
+                </td>
+                <td th:text="${order.deliveryAddress}"></td>
+                <td th:text="${order.deliveryType}"></td>
+                <td th:text="${order.totalOrderAmount}"></td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a th:href="@{/orders/{orderId}(orderId=${order.orderId})}" class="btn btn-sm btn-outline-secondary">Просмотр</a>
+                        <form th:action="@{/orders/delete/{orderId}(orderId=${order.orderId})}" method="post"
+                              onsubmit="return confirm('Удалить этот заказ?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

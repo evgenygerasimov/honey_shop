@@ -68,6 +68,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                         .requestMatchers(HttpMethod.POST, "/users/edit").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 )
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/analytics/**").hasAnyRole("SUPER_ADMIN", "ADMIN"))
                 .authorizeHttpRequests(request ->
                         request.anyRequest().permitAll()
                 )
