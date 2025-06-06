@@ -43,13 +43,13 @@ public class OrderController {
 
         model.addAttribute("order", order);
         model.addAttribute("productsMap", productsMap);
-        model.addAttribute("userId", getCurrentUserId());
+        model.addAttribute("authUserId", getCurrentUserId());
         return "order-details";
     }
 
     @GetMapping
     public String orders(Model model) {
-        model.addAttribute("userId", getCurrentUserId());
+        model.addAttribute("authUserId", getCurrentUserId());
         model.addAttribute("orders", orderService.findAll());
         return "all-orders";
     }

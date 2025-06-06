@@ -1,121 +1,10 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="ru" xmlns:th="http://www.thymeleaf.org">-->
-<!--<th:block th:replace="~{header-fragment :: common-head('Все пользователи')}"></th:block>-->
-
-<!--<body>-->
-<!--<div class="container">-->
-<!--    <div th:if="${accessDeniedMessage}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">-->
-<!--        <span th:text="${accessDeniedMessage}">У вас нет прав для выполнения этого действия.</span>-->
-<!--        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>-->
-<!--    </div>-->
-<!--    <h2 class="mt-5 d-flex justify-content-between">-->
-<!--        Пользователи-->
-<!--        <div class="d-flex gap-1">-->
-<!--                <form th:action="@{/users/{userId}(userId=${authUserId})}" method="get">-->
-<!--                    <button type="submit" class="btn btn-light">Моя страница</button>-->
-<!--                </form>-->
-<!--                <form th:action="@{/users}" method="get"-->
-<!--                      th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">-->
-<!--                    <button type="submit" class="btn btn-light">Добавить нового пользователя</button>-->
-<!--                </form>-->
-<!--        </div>-->
-<!--    </h2>-->
-<!--    <table class="table">-->
-<!--        <thead>-->
-<!--        <tr>-->
-<!--            <th scope="col">Имя пользователя</th>-->
-<!--            <th scope="col">Ник пользователя</th>-->
-<!--            <th scope="col">Электронная почта</th>-->
-<!--            <th scope="col">Роль</th>-->
-<!--            <th scope="col">Действия</th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--        <tr th:each="user : ${users}">-->
-<!--            <td th:text="${user.firstName() + ' ' + user.middleName() + ' ' + user.lastName()}"></td>-->
-<!--            <td th:text="${user.username}"></td>-->
-<!--            <td th:text="${user.email}"></td>-->
-<!--            <td th:text="${user.role}"></td>-->
-<!--            <td>-->
-<!--                <div class="d-flex gap-1">-->
-<!--                    <form th:action="@{/users/edit_form/{userId}(userId=${user.userId()})}" method="get"-->
-<!--                          th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">-->
-<!--                        <button type="submit" class="btn btn-secondary">Редактировать</button>-->
-<!--                    </form>-->
-<!--                    <form th:action="@{/users/delete/{userId}(userId=${user.userId()})}"-->
-<!--                          method="post"-->
-<!--                          onsubmit="return confirm('Удалить этого пользователя?');"-->
-<!--                          class="d-inline"-->
-<!--                          th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')') and user.userId() != authUserId}">-->
-<!--                        <button type="submit" class="btn btn-secondary">Удалить</button>-->
-<!--                    </form>-->
-<!--                </div>-->
-<!--            </td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--</div>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>-->
-<!--<script src="/assets/bootstrap/js/bootstrap.min.js"></script>-->
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>Все пользователи</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .main-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-        .sidebar {
-            width: 240px;
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            border-right: 1px solid #dee2e6;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar form {
-            margin: 0;
-            width: 100%;
-        }
-        .sidebar button.btn-light {
-            width: 100%;
-            border-radius: 0;
-            border: none;
-            border-bottom: 1px solid #dee2e6;
-            text-align: left;
-            padding-left: 20px;
-            font-weight: 500;
-            color: #212529;
-            background-color: transparent;
-            transition: background-color 0.2s ease;
-        }
-        .sidebar button.btn-light:last-child {
-            border-bottom: none;
-        }
-        .sidebar button.btn-light:hover,
-        .sidebar button.btn-light:focus {
-            background-color: #e9ecef;
-            color: #000;
-            outline: none;
-            box-shadow: none;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -161,9 +50,19 @@
         <form th:action="@{/users/edit_form/{userId}(userId=${authUserId})}">
             <button type="submit" class="btn btn-light">Редактировать профиль</button>
         </form>
-        <form th:action="@{/analytics/}" method="get">
-            <button type="submit" class="btn btn-light">Аналитика</button>
-        </form>
+        <button class="btn btn-light no-border" type="button"
+                data-bs-toggle="collapse" data-bs-target="#analyticsSubmenu"
+                aria-expanded="false" aria-controls="analyticsSubmenu">
+            Аналитика
+        </button>
+        <div class="collapse" id="analyticsSubmenu">
+            <form th:action="@{/analytics/order-info-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Заказы</button>
+            </form>
+            <form th:action="@{/analytics/page-view-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Просмотры страниц</button>
+            </form>
+        </div>
         <form th:action="@{/auth/logout}" method="post">
             <button type="submit" class="btn btn-light">Выйти</button>
         </form>
@@ -180,7 +79,7 @@
             <div class="d-flex gap-2">
                 <form th:action="@{/users}" method="get"
                       th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary">Добавить пользователя</button>
+                    <button type="submit" class="btn btn-secondary">Добавить пользователя</button>
                 </form>
             </div>
         </h2>

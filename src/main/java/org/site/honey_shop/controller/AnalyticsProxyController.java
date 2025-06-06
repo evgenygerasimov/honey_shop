@@ -1,5 +1,6 @@
 package org.site.honey_shop.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +30,26 @@ public class AnalyticsProxyController {
                                                    @RequestHeader HttpHeaders headers) {
 
         String forwardUri = request.getRequestURI().replaceFirst("/analytics", "");
-        String targetUrl = analyticsBaseUrl + forwardUri + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
-        headers.set("X-Proxy-Verified", "true");
-        HttpEntity<byte[]> requestEntity = new HttpEntity<>(body, headers);
-        ResponseEntity<byte[]> responseEntity = restTemplate.exchange(targetUrl, method, requestEntity, byte[].class);
+        String targetUrl = analyticsBaseUrl
+                + forwardUri
+                + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
-        return responseEntity;
+        String accessToken = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("access_token")) {
+                    accessToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        if (accessToken != null) {
+            headers.setBearerAuth(accessToken);
+        }
+
+        HttpEntity<byte[]> requestEntity = new HttpEntity<>(body, headers);
+
+        return restTemplate.exchange(targetUrl, method, requestEntity, byte[].class);
     }
 }

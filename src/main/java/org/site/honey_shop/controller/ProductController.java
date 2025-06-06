@@ -35,7 +35,7 @@ public class ProductController {
 
     @GetMapping
     public String listProducts(Model model) {
-        model.addAttribute("userId", getCurrentUserId());
+        model.addAttribute("authUserId", getCurrentUserId());
         model.addAttribute("products", productService.getAllProducts());
         return "all-products";
     }

@@ -37,7 +37,7 @@ public class ShowcaseAdminController {
             categoryProductsMap.put(category, products);
         }
 
-        model.addAttribute("userId", getCurrentUserId());
+        model.addAttribute("authUserId", getCurrentUserId());
         model.addAttribute("categoryProductsMap", categoryProductsMap);
         return "showcase";
     }

@@ -9,7 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.site.honey_shop.constants.TokenLifeTime;
 import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.repository.TokenRepository;
+import org.site.honey_shop.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -17,6 +23,7 @@ import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,12 +37,25 @@ public class JwtService {
     private String secretKey;
     private final long validityFifteenMinutes = TokenLifeTime.ACCESS_TOKEN.toMillis();
     private final long validitySevenDays = TokenLifeTime.REFRESH_TOKEN.toMillis();
+    private final UserService userService;
+    private final ApplicationContext context;
+
 
     private final TokenRepository tokenRepository;
 
     public String generateAccessToken(String username) {
+        UserDetailsService userDetailsService = context.getBean(UserDetailsService.class);
+        Collection<? extends GrantedAuthority> authorities =
+                userDetailsService.loadUserByUsername(username).getAuthorities();
+
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
         return Jwts.builder()
                 .subject(username)
+                .claim("userId", userService.findByUsername(username).userId())
+                .claim("authorities", roles)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + validityFifteenMinutes))
                 .setId(UUID.randomUUID().toString())

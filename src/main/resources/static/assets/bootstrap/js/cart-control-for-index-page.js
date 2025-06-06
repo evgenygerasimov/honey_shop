@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Настройка кнопок изменения количества
-    document.querySelectorAll(".d-flex").forEach(group => {
-        let quantityInput = group.querySelector(".quantityInput");
-        let decreaseBtn = group.querySelector(".decreaseBtn");
-        let increaseBtn = group.querySelector(".increaseBtn");
+    document.querySelectorAll(".card").forEach(card => {
+        let quantityInput = card.querySelector(".quantityInput");
+        let decreaseBtn = card.querySelector(".decreaseBtn");
+        let increaseBtn = card.querySelector(".increaseBtn");
 
-        if (quantityInput && decreaseBtn && increaseBtn) {  // Проверяем, что элементы существуют
+        if (quantityInput && decreaseBtn && increaseBtn) {
             decreaseBtn.addEventListener("click", function () {
                 let value = parseInt(quantityInput.value);
                 if (value > 1) {

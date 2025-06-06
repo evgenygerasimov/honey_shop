@@ -1,129 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <title>Управление витриной</title>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>-->
-<!--    <style>-->
-<!--        .category-item {-->
-<!--            cursor: grab;-->
-<!--            background-color: #f8f9fa;-->
-<!--            border: 1px solid #dee2e6;-->
-<!--            border-radius: 0.5rem;-->
-<!--            padding: 1rem;-->
-<!--            margin-bottom: 1.5rem;-->
-<!--        }-->
-
-<!--        .products {-->
-<!--            padding: 1rem;-->
-<!--            background-color: #fff;-->
-<!--            border-radius: 0.5rem;-->
-<!--            border: 1px solid #dee2e6;-->
-<!--        }-->
-
-<!--        .product-item {-->
-<!--            cursor: grab;-->
-<!--            background-color: #e9ecef;-->
-<!--            border: 1px solid #ced4da;-->
-<!--            border-radius: 0.375rem;-->
-<!--            padding: 0.75rem 1rem;-->
-<!--            margin-bottom: 0.5rem;-->
-<!--        }-->
-
-<!--        .sortable-ghost {-->
-<!--            opacity: 0.5;-->
-<!--        }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body class="bg-light">-->
-<!--<div class="container py-4">-->
-<!--    <div class="d-flex justify-content-between align-items-center mb-3">-->
-<!--        <h2 class="mb-0">Управленией витриной</h2>-->
-<!--        <div class="d-flex gap-2">-->
-<!--            <form th:action="@{/users/{userId}(userId=${userId})}" method="get">-->
-<!--                <button type="submit" class="btn btn-light btn-sm">Моя страница</button>-->
-<!--            </form>-->
-<!--            <form th:action="@{/products/new}" method="get">-->
-<!--                <button type="submit" class="btn btn-light btn-sm">Создать товар</button>-->
-<!--            </form>-->
-<!--            <form th:action="@{/categories/new}" method="get">-->
-<!--                <button type="submit" class="btn btn-light btn-sm">Создать категорию</button>-->
-<!--            </form>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div id="categories">-->
-<!--        <div th:each="entry : ${categoryProductsMap.entrySet()}"-->
-<!--             class="category-item"-->
-<!--             th:attr="data-category-id=${entry.key.categoryId}">-->
-<!--            <h4 th:text="${entry.key.name}" class="mb-3"></h4>-->
-
-<!--            <div class="products" th:attr="data-category-id=${entry.key.categoryId}">-->
-<!--                <div th:each="product : ${entry.value}"-->
-<!--                     class="product-item"-->
-<!--                     th:attr="data-product-id=${product.productId}">-->
-<!--                    <span th:text="${product.name}">Product Name</span>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div class="text-center mt-4">-->
-<!--        <button id="saveOrderBtn" class="btn btn-secondary">Сохранить порядок</button>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--<script>-->
-<!--    // Сортировка категорий-->
-<!--    const categoriesContainer = document.getElementById('categories');-->
-<!--    new Sortable(categoriesContainer, {-->
-<!--        animation: 150,-->
-<!--        ghostClass: 'sortable-ghost',-->
-<!--        handle: '.category-item',-->
-<!--    });-->
-
-<!--    // Сортировка продуктов в каждой категории-->
-<!--    document.querySelectorAll('.products').forEach(productsEl => {-->
-<!--        new Sortable(productsEl, {-->
-<!--            animation: 150,-->
-<!--            ghostClass: 'sortable-ghost',-->
-<!--            handle: '.product-item',-->
-<!--        });-->
-<!--    });-->
-
-<!--    // Сохранение порядка-->
-<!--    document.getElementById('saveOrderBtn').addEventListener('click', () => {-->
-<!--        const categoryOrder = [];-->
-<!--        const productOrder = {};-->
-
-<!--        categoriesContainer.querySelectorAll('.category-item').forEach(catEl => {-->
-<!--            const catId = catEl.getAttribute('data-category-id');-->
-<!--            categoryOrder.push(catId);-->
-
-<!--            const products = [];-->
-<!--            catEl.querySelectorAll('.product-item').forEach(prodEl => {-->
-<!--                products.push(prodEl.getAttribute('data-product-id'));-->
-<!--            });-->
-<!--            productOrder[catId] = products;-->
-<!--        });-->
-
-<!--        fetch('/showcase/reorder', {-->
-<!--            method: 'POST',-->
-<!--            headers: {'Content-Type': 'application/json'},-->
-<!--            body: JSON.stringify({categoryOrder, productOrder})-->
-<!--        }).then(response => {-->
-<!--            if (response.ok) {-->
-<!--                alert('Порядок сохранён!');-->
-<!--            } else {-->
-<!--                alert('Ошибка сохранения порядка!');-->
-<!--            }-->
-<!--        }).catch(() => alert('Ошибка сети!'));-->
-<!--    });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -131,82 +5,7 @@
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <style>
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .main-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-        .sidebar {
-            width: 240px;
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            border-right: 1px solid #dee2e6;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar form {
-            margin: 0;
-            width: 100%;
-        }
-        .sidebar button.btn-light {
-            width: 100%;
-            border-radius: 0;
-            border: none;
-            border-bottom: 1px solid #dee2e6;
-            text-align: left;
-            padding-left: 20px;
-            font-weight: 500;
-            color: #212529;
-            background-color: transparent;
-            transition: background-color 0.2s ease;
-        }
-        .sidebar button.btn-light:last-child {
-            border-bottom: none;
-        }
-        .sidebar button.btn-light:hover,
-        .sidebar button.btn-light:focus {
-            background-color: #e9ecef;
-            color: #000;
-            outline: none;
-            box-shadow: none;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .category-item {
-            cursor: grab;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .products {
-            padding: 1rem;
-            background-color: #fff;
-            border-radius: 0.5rem;
-            border: 1px solid #dee2e6;
-        }
-        .product-item {
-            cursor: grab;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 0.375rem;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-        }
-        .sortable-ghost {
-            opacity: 0.5;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -226,7 +25,7 @@
 
 <div class="main-container">
     <div class="sidebar">
-        <form th:action="@{/users/{userId}(userId=${userId})}" method="get">
+        <form th:action="@{/users/{userId}(userId=${authUserId})}" method="get">
             <button type="submit" class="btn btn-light">Моя страница</button>
         </form>
         <form th:action="@{/products}" method="get">
@@ -249,12 +48,22 @@
               th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
             <button type="submit" class="btn btn-light">Добавить пользователя</button>
         </form>
-        <form th:action="@{/users/edit_form/{userId}(userId=${userId})}">
+        <form th:action="@{/users/edit_form/{userId}(userId=${authUserId})}">
             <button type="submit" class="btn btn-light">Редактировать профиль</button>
         </form>
-        <form th:action="@{/analytics/}" method="get">
-            <button type="submit" class="btn btn-light">Аналитика</button>
-        </form>
+        <button class="btn btn-light no-border" type="button"
+                data-bs-toggle="collapse" data-bs-target="#analyticsSubmenu"
+                aria-expanded="false" aria-controls="analyticsSubmenu">
+            Аналитика
+        </button>
+        <div class="collapse" id="analyticsSubmenu">
+            <form th:action="@{/analytics/order-info-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Заказы</button>
+            </form>
+            <form th:action="@{/analytics/page-view-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Просмотры страниц</button>
+            </form>
+        </div>
         <form th:action="@{/auth/logout}" method="post">
             <button type="submit" class="btn btn-light">Выйти</button>
         </form>
@@ -265,10 +74,10 @@
             <h2 class="mb-0">Управление витриной</h2>
             <div class="d-flex gap-2">
                 <form th:action="@{/products/new}" method="get">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary">Создать товар</button>
+                    <button type="submit" class="btn btn-secondary">Создать товар</button>
                 </form>
                 <form th:action="@{/categories/new}" method="get">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary">Создать категорию</button>
+                    <button type="submit" class="btn btn-secondary">Создать категорию</button>
                 </form>
             </div>
         </div>
@@ -289,8 +98,8 @@
             </div>
         </div>
 
-        <div class="text-center mt-4">
-            <button id="saveOrderBtn" class="btn btn-sm btn-outline-secondary">Сохранить порядок</button>
+        <div class="mb-3">
+            <button id="saveOrderBtn" class="btn btn-secondary">Сохранить порядок</button>
         </div>
     </div>
 </div>

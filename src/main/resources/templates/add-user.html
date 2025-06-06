@@ -1,179 +1,10 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="ru" xmlns:th="http://www.thymeleaf.org">-->
-<!--<th:block th:replace="~{header-fragment :: common-head('Добавить нового пользователя')}"></th:block>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div class="container">-->
-<!--    <h2 class="mt-5 d-flex justify-content-between">-->
-<!--        Пользователи-->
-<!--        <div class="d-flex gap-1">-->
-<!--            <div>-->
-<!--                <form th:action="@{/users/{userId}(userId=${authUserId})}" method="get">-->
-<!--                    <button type="submit" class="btn btn-light">Моя страница</button>-->
-<!--                </form>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </h2>-->
-<!--    <form th:action="@{/users}" th:object="${user}" method="post" enctype="multipart/form-data">-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="username" class="form-label">Логин:</label>-->
-<!--            <input type="text" class="form-control" id="username" th:field="*{username}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('username')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('username')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="password" class="form-label">Пароль:</label>-->
-<!--            <input type="password" class="form-control" id="password" th:field="*{password}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('password')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('password')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="firstName" class="form-label">Имя:</label>-->
-<!--            <input type="text" class="form-control" id="firstName" th:field="*{firstName}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('firstName')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('firstName')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="lastName" class="form-label">Фамилия:</label>-->
-<!--            <input type="text" class="form-control" id="lastName" th:field="*{lastName}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('lastName')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('lastName')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="middleName" class="form-label">Отчество:</label>-->
-<!--            <input type="text" class="form-control" id="middleName" th:field="*{middleName}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('middleName')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('middleName')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="email" class="form-label">Email:</label>-->
-<!--            <input type="text" class="form-control" id="email" th:field="*{email}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('email')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('email')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="phone" class="form-label">Телефон:</label>-->
-<!--            <input type="text" class="form-control" id="phone" th:field="*{phone}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('phone')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('phone')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="image" class="form-label">Фото:</label>-->
-<!--            <input type="file" id="image" name="image" class="form-control-file">-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('photo')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('photo')[0]}"></span>-->
-<!--        </div>-->
-<!--        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${errorMessage}">Ошибка</span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="birthDate" class="form-label">Дата рождения:</label>-->
-<!--            <input type="date" class="form-control" id="birthDate" th:field="*{birthDate}"/><br>-->
-<!--        </div>-->
-<!--        <div th:if="${#fields.hasErrors('birthDate')}" class="alert alert-danger" role="alert">-->
-<!--            <span th:text="${#fields.errors('birthDate')[0]}"></span>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="role" class="form-label">Роль:</label>-->
-<!--            <select id="role" class="form-control" th:field="*{role}">-->
-<!--                <option value="ROLE_ADMIN">Администратор</option>-->
-<!--                <option value="ROLE_SUPER_ADMIN">Супер администратор</option>-->
-<!--            </select>-->
-<!--        </div>-->
-
-<!--        <div class="mb-3">-->
-<!--            <label for="enabled" class="form-label">Доступ:</label>-->
-<!--            <select id="enabled" class="form-control" th:field="*{enabled}">-->
-<!--                <option value="TRUE">Разрешить</option>-->
-<!--                <option value="FALSE">Запретить</option>-->
-<!--            </select>-->
-<!--        </div>-->
-<!--        <div class="mb-3">-->
-<!--            <button type="submit" class="btn btn-sm btn-secondary">Создать пользователя</button>-->
-<!--        </div>-->
-<!--    </form>-->
-<!--</div>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>-->
-<!--<script src="/assets/bootstrap/js/bootstrap.min.js"></script>-->
-<!--<script src="/assets/bootstrap/js/user-phone-mask.js"></script>-->
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>Добавить нового пользователя</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .main-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-        .sidebar {
-            width: 240px;
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            border-right: 1px solid #dee2e6;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar form {
-            margin: 0;
-            width: 100%;
-        }
-        .sidebar button.btn-light {
-            width: 100%;
-            border-radius: 0;
-            border: none;
-            border-bottom: 1px solid #dee2e6;
-            text-align: left;
-            padding-left: 20px;
-            font-weight: 500;
-            color: #212529;
-            background-color: transparent;
-            transition: background-color 0.2s ease;
-        }
-        .sidebar button.btn-light:last-child {
-            border-bottom: none;
-        }
-        .sidebar button.btn-light:hover,
-        .sidebar button.btn-light:focus {
-            background-color: #e9ecef;
-            color: #000;
-            outline: none;
-            box-shadow: none;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -219,16 +50,26 @@
         <form th:action="@{/users/edit_form/{userId}(userId=${authUserId})}">
             <button type="submit" class="btn btn-light">Редактировать профиль</button>
         </form>
-        <form th:action="@{/analytics/}" method="get">
-            <button type="submit" class="btn btn-light">Аналитика</button>
-        </form>
+        <button class="btn btn-light no-border" type="button"
+                data-bs-toggle="collapse" data-bs-target="#analyticsSubmenu"
+                aria-expanded="false" aria-controls="analyticsSubmenu">
+            Аналитика
+        </button>
+        <div class="collapse" id="analyticsSubmenu">
+            <form th:action="@{/analytics/order-info-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Заказы</button>
+            </form>
+            <form th:action="@{/analytics/page-view-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Просмотры страниц</button>
+            </form>
+        </div>
         <form th:action="@{/auth/logout}" method="post">
             <button type="submit" class="btn btn-light">Выйти</button>
         </form>
     </div>
 
     <div class="content">
-        <h2 class="mb-4">Добававить нового пользователя</h2>
+        <h2 class="mb-4">Добававить пользователя</h2>
         <form th:action="@{/users}" th:object="${user}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="username" class="form-label">Логин:</label>

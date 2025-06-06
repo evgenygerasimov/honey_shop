@@ -2,9 +2,12 @@ package org.site.honey_shop.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.site.honey_shop.annotation.OnCreate;
+import org.site.honey_shop.annotation.OnUpdate;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,6 +29,7 @@ public class Category {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Size(max = 255, message = "Слишком длинное имя файла изображения.")
     @Column(name = "image_url")
     private String imageUrl;
 

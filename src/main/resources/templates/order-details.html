@@ -1,132 +1,14 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="ru" xmlns:th="http://www.thymeleaf.org">-->
-<!--<th:block th:replace="~{header-fragment :: common-head('Детали заказа')}"></th:block>-->
-<!--<body class="bg-light">-->
-<!--<div class="container mt-5">-->
-<!--    <div class="card shadow-lg p-4">-->
-<!--        <h2 class="text-center text-primary mb-4">Детали заказа</h2>-->
-
-<!--        <div class="row">-->
-<!--            <div class="col-md-6">-->
-<!--                <h5 class="fw-bold">Основная информация</h5>-->
-<!--                <p><strong>Дата и время заказа:</strong> <span th:text="${#temporals.format(order.createDate, 'yyyy-MM-dd')}"/> / <span th:text="${#temporals.format(order.createDate, 'HH:mm:ss')}"></span><span ></span></p>-->
-<!--                <p><strong>Номер заказа:</strong> <span th:text="${order.orderId}"></span></p>-->
-<!--                <p><strong>ФИО :</strong> <span th:text="${order.fullName}"></span></p>-->
-<!--                <p><strong>Email:</strong> <span th:text="${order.customerEmail}"></span></p>-->
-<!--                <p><strong>Телефон:</strong> <span th:text="${order.customerPhone}"></span></p>-->
-<!--                <p><strong>Адрес доставки:</strong> <span th:text="${order.deliveryAddress}"></span></p>-->
-<!--            </div>-->
-
-<!--            <div class="col-md-6">-->
-<!--                <h5 class="fw-bold">Оплата и доставка</h5>-->
-<!--                <p><strong>Тип доставки:</strong> <span th:text="${order.deliveryType}"></span></p>-->
-<!--                <p><strong>Статус заказа:</strong> <span th:text="${order.orderStatus}"></span></p>-->
-<!--                <p><strong>Статус оплаты:</strong> <span th:text="${order.paymentStatus}"></span></p>-->
-<!--                <p><strong>Сумма товаров:</strong> <span th:text="${order.productAmount}"></span> руб.</p>-->
-<!--                <p><strong>Доставка:</strong> <span th:text="${order.deliveryAmount}"></span> руб.</p>-->
-<!--                <p><strong class="fs-5 text-danger">Итого:</strong> <span th:text="${order.totalOrderAmount}"></span> руб.</p>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <h4 class="mt-4">Товары в заказе</h4>-->
-<!--        <table class="table table-striped table-hover border">-->
-<!--            <thead class="table-dark">-->
-<!--            <tr>-->
-<!--                <th>Название товара</th>-->
-<!--                <th>Количество</th>-->
-<!--                <th>Цена за единицу</th>-->
-<!--                <th>Сумма</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr th:each="item : ${order.orderItems}">-->
-<!--                <td th:text="${productsMap[item.product.productId].name}"></td>-->
-<!--                <td th:text="${item.quantity}"></td>-->
-<!--                <td th:text="${item.pricePerUnit} + ' руб.'"></td>-->
-<!--                <td th:text="${item.quantity * item.pricePerUnit} + ' руб.'"></td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
-
-<!--        <div class="text-center">-->
-<!--            <a href="/orders" class="btn btn-secondary">К заказам</a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>-->
-<!--</body>-->
-<!--</html>-->
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>Детали заказа</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .main-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            background-color: #f8f9fa;
-        }
-        .sidebar {
-            width: 240px;
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            border-right: 1px solid #dee2e6;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar form {
-            margin: 0;
-            width: 100%;
-        }
-        .sidebar button.btn-light {
-            width: 100%;
-            border-radius: 0;
-            border: none;
-            border-bottom: 1px solid #dee2e6;
-            text-align: left;
-            padding-left: 20px;
-            font-weight: 500;
-            color: #212529;
-            background-color: transparent;
-            transition: background-color 0.2s ease;
-        }
-        .sidebar button.btn-light:last-child {
-            border-bottom: none;
-        }
-        .sidebar button.btn-light:hover,
-        .sidebar button.btn-light:focus {
-            background-color: #e9ecef;
-            color: #000;
-            outline: none;
-            box-shadow: none;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background: white;
-        }
-        .nav-link.active {
-            font-weight: bold;
-        }
-        /* Дополнительно для заголовков и таблиц */
-        h2.text-primary {
-            color: #0d6efd !important;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <!-- Можно вставить бренд, если надо -->
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" th:href="@{/}">Главная</a></li>
@@ -142,7 +24,7 @@
 
 <div class="main-container">
     <div class="sidebar">
-        <form th:action="@{/users/{userId}(userId=${userId})}" method="get">
+        <form th:action="@{/users/{userId}(userId=${authUserId})}" method="get">
             <button type="submit" class="btn btn-light">Моя страница</button>
         </form>
         <form th:action="@{/products}" method="get">
@@ -163,12 +45,22 @@
         <form th:action="@{/users}" method="get" th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
             <button type="submit" class="btn btn-light">Добавить пользователя</button>
         </form>
-        <form th:action="@{/users/edit_form/{userId}(userId=${userId})}">
+        <form th:action="@{/users/edit_form/{userId}(userId=${authUserId})}">
             <button type="submit" class="btn btn-light">Редактировать профиль</button>
         </form>
-        <form th:action="@{/analytics/}" method="get">
-            <button type="submit" class="btn btn-light">Аналитика</button>
-        </form>
+        <button class="btn btn-light no-border" type="button"
+                data-bs-toggle="collapse" data-bs-target="#analyticsSubmenu"
+                aria-expanded="false" aria-controls="analyticsSubmenu">
+            Аналитика
+        </button>
+        <div class="collapse" id="analyticsSubmenu">
+            <form th:action="@{/analytics/order-info-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Заказы</button>
+            </form>
+            <form th:action="@{/analytics/page-view-dashboard}" method="get">
+                <button type="submit" class="btn btn-light ps-5">Просмотры страниц</button>
+            </form>
+        </div>
         <form th:action="@{/auth/logout}" method="post">
             <button type="submit" class="btn btn-light">Выйти</button>
         </form>

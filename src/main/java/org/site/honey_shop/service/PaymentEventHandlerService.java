@@ -52,7 +52,7 @@ public class PaymentEventHandlerService {
         orderService.update(order);
 
         orderInfoEventPublisher.publishOrderInfoEvent(order);
-        orderEventPublisher.publishOrderCreatedEvent(" for amount " + order.getTotalOrderAmount() + " RUB has been successfully paid");
+        orderEventPublisher.publishOrderCreatedEvent(" на сумму " + order.getTotalOrderAmount() + " руб. был успешно оплачен!");
 
         log.info("Order and payment status(Success) updated successfully for order {}", orderUuid);
     }
@@ -73,7 +73,7 @@ public class PaymentEventHandlerService {
         paymentService.update(payment);
         orderService.update(order);
 
-        orderEventPublisher.publishOrderCreatedEvent(" for amount " + order.getTotalOrderAmount() + " RUB has been cancelled");
+        orderEventPublisher.publishOrderCreatedEvent(" на сумму " + order.getTotalOrderAmount() + " руб. был отменен!");
 
         log.info("Order and payment status(Cancelled) updated successfully for order {}", orderUuid);
     }

@@ -28,14 +28,14 @@ public class CategoryController {
 
     @GetMapping
     public String showCategories(Model model) {
-        model.addAttribute("userId", getCurrentUserId());
+        model.addAttribute("authUserId", getCurrentUserId());
         model.addAttribute("categories", categoryService.findAll());
         return "all-categories";
     }
 
     @GetMapping("/new")
     public String showCategoryForm(Model model) {
-        model.addAttribute("userId", getCurrentUserId());
+        model.addAttribute("authUserId", getCurrentUserId());
         model.addAttribute("category", new Category());
         return "add-category";
     }
@@ -46,7 +46,7 @@ public class CategoryController {
                                        RedirectAttributes redirectAttributes,
                                        Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("userId", getCurrentUserId());
+            model.addAttribute("authUserId", getCurrentUserId());
             return "add-category";
         }
         try {
@@ -65,11 +65,10 @@ public class CategoryController {
                                      Model model,
                                      @RequestParam("image") MultipartFile image) {
         if (result.hasErrors()) {
-            model.addAttribute("userId", getCurrentUserId());
+            model.addAttribute("authUserId", getCurrentUserId());
             return "add-category";
         }
         try {
-            System.out.println("VISIBLE = " + category.getVisible());
             categoryService.saveCategoryWithImage(category, image);
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -90,15 +89,27 @@ public class CategoryController {
 
     @GetMapping("/edit/{id}")
     public String showEditCategoryForm(@PathVariable UUID id, Model model) {
-        model.addAttribute("userId", getCurrentUserId());
+        model.addAttribute("authUserId", getCurrentUserId());
         model.addAttribute("category", categoryService.findById(id));
         return "edit-category";
     }
 
     @PostMapping("/full-update-category")
     public String fullUpdateCategory(@Valid @ModelAttribute Category category,
+                                     BindingResult result,
+                                     RedirectAttributes redirectAttributes,
+                                     Model model,
                                      @RequestParam("image") MultipartFile image) {
-        categoryService.fullUpdateCategory(category, image);
+        if (result.hasErrors()) {
+            model.addAttribute("authUserId", getCurrentUserId());
+            return "edit-category";
+        }
+        try {
+            categoryService.fullUpdateCategory(category, image);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/categories/edit/" + category.getCategoryId();
+        }
 
         return "redirect:/categories";
     }
