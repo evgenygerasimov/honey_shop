@@ -19,8 +19,4 @@ public enum TokenLifeTime {
     public long toMillis() {
         return duration.toMillis();
     }
-
-    public long toSeconds() {
-        return duration.getSeconds();
-    }
 }

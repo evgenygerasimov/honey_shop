@@ -60,8 +60,6 @@ public class OrderController {
                               @RequestParam("orderItemsData") String orderItemsJson,
                               RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            System.out.println("Ошибки валидации:");
-            result.getAllErrors().forEach(e -> System.out.println(e.toString()));
             return "checkout";
         }
         Order newOrder;

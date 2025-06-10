@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.constants.TokenLifeTime;
 import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.repository.TokenRepository;
@@ -13,6 +14,7 @@ import org.site.honey_shop.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +33,7 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JwtService {
 
     @Value("${myapp.secret.key}")
@@ -127,6 +130,14 @@ public class JwtService {
                 .orElseThrow(() -> new RuntimeException("Token not found"));
     }
 
+    public boolean isAccessTokenExpired(String accessToken) {
+        Token accessTokenObj = tokenRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
+        LocalDateTime expirationTime = accessTokenObj.getCreateDate()
+                .plus(Duration.of(validityFifteenMinutes, ChronoUnit.MILLIS));
+        return expirationTime.isBefore(LocalDateTime.now()) || !accessTokenObj.isAccessTokenValid();
+    }
+
     public boolean isRefreshTokenExpired(String refreshToken) {
         Token refreshTokenObj = tokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
@@ -135,11 +146,21 @@ public class JwtService {
         return expirationTime.isBefore(LocalDateTime.now()) || !refreshTokenObj.isRefreshTokenValid();
     }
 
-    public boolean isAccessTokenExpired(String accessToken) {
-        Token accessTokenObj = tokenRepository.findByAccessToken(accessToken)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
-        LocalDateTime expirationTime = accessTokenObj.getCreateDate()
-                .plus(Duration.of(validityFifteenMinutes, ChronoUnit.MILLIS));
-        return expirationTime.isBefore(LocalDateTime.now()) || !accessTokenObj.isAccessTokenValid();
-    }
+//    @Scheduled(fixedRate = 2 * 60 * 1000)
+//    public void invalidateTokens() {
+//        List<Token> tokens = getTokens();
+//        for (Token token : tokens) {
+//            try {
+//
+//                boolean refreshExpired = isRefreshTokenExpired(token.getRefreshToken());
+//
+//                if (refreshExpired) {
+//                    tokenRepository.delete(token);
+//                    log.info("Deleted expired token: {}", token.getTokenId());
+//                }
+//            } catch (Exception e) {
+//                log.warn("Failed to validate token: {}", token.getTokenId(), e);
+//            }
+//        }
+//    }
 }

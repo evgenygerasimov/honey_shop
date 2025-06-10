@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.entity.Token;
+import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.service.AuthService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -29,16 +31,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthService authService;
     private final UserDetailsService userDetailsService;
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().equals("/auth/logout");
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        if (path.equals("/auth/logout")) {
+            Cookie[] cookies = request.getCookies();
+            Optional<String> accessTokenOptional = Optional.empty();
+            if (cookies != null) {
+                accessTokenOptional = getCookie(cookies, "access_token");
+            }
+            try {
+                String accessToken = accessTokenOptional.orElseThrow(()
+                        -> new MyAuthenticationException("Access token not found"));
+                authService.logout(accessToken, request, response);
+
+                filterChain.doFilter(request, response);
+            } catch (MyAuthenticationException ex) {
+                response.sendRedirect(request.getContextPath() + "/error?errorMessage=" + URLEncoder.encode(ex.getMessage(), "UTF-8"));
+            }
+            return;
+        }
 
         try {
             Cookie[] cookies = request.getCookies();
@@ -64,12 +82,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                             setCookie(response, "access_token", newToken.getAccessToken());
                             setCookie(response, "refresh_token", newToken.getRefreshToken());
+                        } else {
+                            // Рефреш токен тоже просрочен или не валиден
+                            SecurityContextHolder.clearContext();
+                            redirectToLogin(response);
+                            return;  // Прерываем цепочку, чтобы не пускать дальше
                         }
+                    } else {
+                        // Нет рефреш токена и access токен просрочен
+                        SecurityContextHolder.clearContext();
+                        redirectToLogin(response);
+                        return;
                     }
                 }
             }
         } catch (Exception e) {
             log.error("JWT auth filter error", e);
+            SecurityContextHolder.clearContext();
+            try {
+                redirectToLogin(response);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            return;
         }
 
         filterChain.doFilter(request, response);
@@ -99,5 +134,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         cookie.setSecure(true);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    private void redirectToLogin(HttpServletResponse response) throws Exception {
+        response.sendRedirect("/auth/login");
     }
 }

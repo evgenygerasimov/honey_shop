@@ -115,5 +115,6 @@ public class AuthService {
         SecurityContextHolder.clearContext();
 
         request.getSession().invalidate();
+
     }
 }

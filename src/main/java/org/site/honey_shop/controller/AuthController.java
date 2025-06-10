@@ -46,7 +46,7 @@ public class AuthController {
     @PostMapping("/logout")
     public String logout(@CookieValue(name = "access_token", required = false) String accessToken,
                          HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
-        authService.logout(accessToken, httpServletRequest, httpServletResponse);
+            authService.logout(accessToken, httpServletRequest, httpServletResponse);
         return "redirect:/auth/login";
     }
 }

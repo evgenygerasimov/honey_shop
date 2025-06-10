@@ -63,6 +63,10 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     depends_on:
       - zookeeper
+    volumes:
+      - ./wait-for-it.sh:/wait-for-it.sh
+      - ./kafka-entrypoint.sh:/kafka-entrypoint.sh
+    entrypoint: [ "/kafka-entrypoint.sh" ]
     networks:
       - honey_net
 
@@ -101,6 +105,33 @@ services:
     networks:
       - honey_net
 
+  prometheus:
+    image: prom/prometheus
+    container_name: honey_shop_prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - honey_net
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - honey_net
+
+volumes:
+  grafana-storage:
+
 networks:
     honey_net:
       external: true
+
+
+
+
+
