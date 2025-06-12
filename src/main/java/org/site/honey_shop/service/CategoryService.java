@@ -9,6 +9,8 @@ import org.site.honey_shop.exception.ImageUploadException;
 import org.site.honey_shop.repository.CategoryRepository;
 import org.site.honey_shop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,6 +82,11 @@ public class CategoryService {
     public List<Category> findAll() {
         log.info("Get all categories");
         return categoryRepository.findAll(Sort.by("name"));
+    }
+
+    public Page<Category> findAll(Pageable pageable) {
+        log.info("Get all categories with pagination");
+        return categoryRepository.findAll(pageable);
     }
 
     public List<Category> findAllTrueVisibleCategories() {

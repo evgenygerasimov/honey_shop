@@ -10,6 +10,8 @@ import org.site.honey_shop.exception.DeleteProductException;
 import org.site.honey_shop.exception.OrderCreateException;
 import org.site.honey_shop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,36 +38,10 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
     }
 
-    public List<Product> getAllProducts() {
-        List<Product> productList = productRepository.findAll();
-
-        Map<Category, List<Product>> groupedByCategory = productList.stream()
-                .filter(product -> product.getCategory() != null)
-                .collect(Collectors.groupingBy(
-                        Product::getCategory,
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> list.stream()
-                                        .sorted(Comparator.comparing(Product::getPrice).reversed())
-                                        .collect(Collectors.toList())
-                        )
-                ));
-
-        List<Product> sortedProductList = new ArrayList<>();
-
-        for (Category category : groupedByCategory.keySet()) {
-            sortedProductList.addAll(groupedByCategory.get(category));
-        }
-
-        List<Product> uncategorized = productList.stream()
-                .filter(product -> product.getCategory() == null)
-                .sorted(Comparator.comparing(Product::getPrice).reversed())
-                .toList();
-        sortedProductList.addAll(uncategorized);
-
-        log.info("Get all products grouped by category and sorted by price.");
-        return sortedProductList;
-    }
+public Page<Product> getAllProducts(Pageable pageable) {
+    log.info("Get all products grouped by category and sorted by price.");
+    return productRepository.findAll(pageable);
+}
 
 
     public void createProduct(Product product, List<MultipartFile> pictures, String imageOrder) {
@@ -84,6 +60,7 @@ public class ProductService {
                 .images(orderedLinks)
                 .stockQuantity(product.getStockQuantity())
                 .category(category)
+                .showInShowcase(product.isShowInShowcase())
                 .build();
         log.info("Create product: {}", product.getName());
         productRepository.save(product);
@@ -108,6 +85,7 @@ public class ProductService {
         exisitingProduct.setWeight(product.getWeight());
         exisitingProduct.setStockQuantity(product.getStockQuantity());
         exisitingProduct.setCategory(category);
+        exisitingProduct.setShowInShowcase(product.isShowInShowcase());
 
         log.info("Update product: {}", product.getProductId());
         productRepository.save(exisitingProduct);

@@ -8,6 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.repository.TokenRepository;
+import org.site.honey_shop.service.UserService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
@@ -26,12 +29,26 @@ class JwtServiceTest {
     @InjectMocks
     private JwtService jwtService;
 
+    @Mock
+    private ApplicationContext context;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private UserDetailsService userDetailsService;
+
     private String secretKey;
 
     @BeforeEach
     void setUp() {
         secretKey = Base64.getEncoder().encodeToString("my-very-secret-key-my-very-secret-key".getBytes());
         ReflectionTestUtils.setField(jwtService, "secretKey", secretKey);
+
+        when(context.getBean(UserDetailsService.class))
+                .thenReturn(userDetailsService);
+
+
     }
 
     @Test

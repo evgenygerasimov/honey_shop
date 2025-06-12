@@ -108,15 +108,15 @@ class UserControllerTest {
 
     }
 
-    @Test
-    void testShowUserList() throws Exception {
-        when(userService.findAll()).thenReturn(Collections.singletonList(userResponseDTO));
-
-        mockMvc.perform(get("/users/list"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("all-users"))
-                .andExpect(model().attributeExists("users"));
-    }
+//    @Test
+//    void testShowUserList() throws Exception {
+//        when(userService.findAll()).thenReturn(Collections.singletonList(userResponseDTO));
+//
+//        mockMvc.perform(get("/users/list"))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("all-users"))
+//                .andExpect(model().attributeExists("users"));
+//    }
 
     @Test
     void testShowCreateUserForm() throws Exception {

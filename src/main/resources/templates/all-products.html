@@ -101,7 +101,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="product : ${products}">
+            <tr th:each="product : ${productsPage}">
                 <td th:text="${product.name}"></td>
                 <td>
                     <th:block th:if="${not #lists.isEmpty(product.images)}">
@@ -138,9 +138,48 @@
             </tr>
             </tbody>
         </table>
+        <div class="d-flex justify-content-center align-items-center my-4 gap-3">
+            <form method="get" th:action="@{/products}" class="d-flex align-items-center">
+                <input type="hidden" name="page" th:value="${productsPage.number}"/>
+                <label for="size" class="me-2 mb-0">Показать:</label>
+                <select class="form-select" name="size" id="size" onchange="this.form.submit()" style="width: auto;">
+                    <option th:value="10" th:selected="${productsPage.size == 10}">10</option>
+                    <option th:value="25" th:selected="${productsPage.size == 25}">25</option>
+                    <option th:value="50" th:selected="${productsPage.size == 50}">50</option>
+                </select>
+            </form>
+            <nav aria-label="Навигация по страницам">
+                <ul class="pagination mb-0">
+
+                    <li class="page-item" th:classappend="${!productsPage.hasPrevious()} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/products(page=${productsPage.number - 1}, size=${productsPage.size})}"
+                           aria-label="Предыдущая">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item disabled">
+                        <a class="page-link">
+                            Страница <span th:text="${productsPage.number + 1}"></span> из <span
+                                th:text="${productsPage.totalPages}"></span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${!productsPage.hasNext()} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/products(page=${productsPage.number + 1}, size=${productsPage.size})}"
+                           aria-label="Следующая">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
 
         <!-- Модальные окна с каруселями фотографий -->
-        <th:block th:each="product : ${products}">
+        <th:block th:each="product : ${productsPage}">
             <div class="modal fade" th:id="'productModal' + ${product.productId}" tabindex="-1"
                  aria-labelledby="productModalLabel"
                  aria-hidden="true">

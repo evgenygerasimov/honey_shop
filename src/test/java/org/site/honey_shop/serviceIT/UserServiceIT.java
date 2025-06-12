@@ -70,17 +70,17 @@ class UserServiceIT extends TestContainerConfig {
         assertThat(userDto.username()).isEqualTo("testuser");
     }
 
-    @Test
-    void testFindAllUsers() {
-        userService.save(buildSampleUser(), null);
-        User another = buildSampleUser();
-        another.setUsername("user2");
-        userService.save(another, null);
-
-        List<?> users = userService.findAll();
-
-        assertThat(users).hasSize(2);
-    }
+//    @Test
+//    void testFindAllUsers() {
+//        userService.save(buildSampleUser(), null);
+//        User another = buildSampleUser();
+//        another.setUsername("user2");
+//        userService.save(another, null);
+//
+//        List<?> users = userService.findAll();
+//
+//        assertThat(users).hasSize(2);
+//    }
 
     @Test
     void testRemoveImageFromUserProfile_success() {

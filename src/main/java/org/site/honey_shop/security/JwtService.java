@@ -145,22 +145,4 @@ public class JwtService {
                 .plus(Duration.of(validitySevenDays, ChronoUnit.MILLIS));
         return expirationTime.isBefore(LocalDateTime.now()) || !refreshTokenObj.isRefreshTokenValid();
     }
-
-//    @Scheduled(fixedRate = 2 * 60 * 1000)
-//    public void invalidateTokens() {
-//        List<Token> tokens = getTokens();
-//        for (Token token : tokens) {
-//            try {
-//
-//                boolean refreshExpired = isRefreshTokenExpired(token.getRefreshToken());
-//
-//                if (refreshExpired) {
-//                    tokenRepository.delete(token);
-//                    log.info("Deleted expired token: {}", token.getTokenId());
-//                }
-//            } catch (Exception e) {
-//                log.warn("Failed to validate token: {}", token.getTokenId(), e);
-//            }
-//        }
-//    }
 }

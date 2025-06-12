@@ -13,6 +13,8 @@ import org.site.honey_shop.kafka.OrderEventPublisher;
 import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.OrderRepository;
 import org.site.honey_shop.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,14 +47,10 @@ public class OrderService {
         return orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
     }
 
-    public List<OrderDTO> findAll() {
-        List<OrderDTO> listOrderDTO = new ArrayList<>();
-        for (Order order : orderRepository.findAll()) {
-            listOrderDTO.add(shopMapper.toDto(order));
-        }
-        listOrderDTO.sort((o1, o2) -> o2.getCreateDate().compareTo(o1.getCreateDate()));
+    public Page<OrderDTO> findAll(Pageable pageable) {
+
         log.info("Find all orders sorted by createDate descending");
-        return listOrderDTO;
+        return orderRepository.findAll(pageable).map(shopMapper::toDto);
     }
 
     @Transactional

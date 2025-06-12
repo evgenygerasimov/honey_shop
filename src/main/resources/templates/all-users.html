@@ -95,7 +95,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user : ${users}">
+            <tr th:each="user : ${usersPage}">
                 <td th:text="${user.firstName() + ' ' + user.middleName() + ' ' + user.lastName()}"></td>
                 <td th:text="${user.username}"></td>
                 <td th:text="${user.email}"></td>
@@ -116,6 +116,45 @@
             </tr>
             </tbody>
         </table>
+        <div class="d-flex justify-content-center align-items-center my-4 gap-3">
+            <form method="get" th:action="@{/users/list}" class="d-flex align-items-center">
+                <input type="hidden" name="page" th:value="${usersPage.number}"/>
+                <label for="size" class="me-2 mb-0">Показать:</label>
+                <select class="form-select" name="size" id="size" onchange="this.form.submit()" style="width: auto;">
+                    <option th:value="10" th:selected="${usersPage.size == 10}">10</option>
+                    <option th:value="25" th:selected="${usersPage.size == 25}">25</option>
+                    <option th:value="50" th:selected="${usersPage.size == 50}">50</option>
+                </select>
+            </form>
+            <nav aria-label="Навигация по страницам">
+                <ul class="pagination mb-0">
+
+                    <li class="page-item" th:classappend="${!usersPage.hasPrevious()} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/users/list(page=${usersPage.number - 1}, size=${usersPage.size})}"
+                           aria-label="Предыдущая">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item disabled">
+                        <a class="page-link">
+                            Страница <span th:text="${usersPage.number + 1}"></span> из <span
+                                th:text="${usersPage.totalPages}"></span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${!usersPage.hasNext()} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/users/list(page=${usersPage.number + 1}, size=${usersPage.size})}"
+                           aria-label="Следующая">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
 

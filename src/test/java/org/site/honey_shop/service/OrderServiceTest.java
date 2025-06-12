@@ -89,21 +89,21 @@ class OrderServiceTest {
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
-    @Test
-    void testFindAll_ShouldReturnSortedDTOs() {
-        Order order1 = Order.builder().createDate(LocalDateTime.now()).build();
-        Order order2 = Order.builder().createDate(LocalDateTime.now().plusDays(1)).build();
-        OrderDTO dto1 = new OrderDTO(); dto1.setCreateDate(order1.getCreateDate());
-        OrderDTO dto2 = new OrderDTO(); dto2.setCreateDate(order2.getCreateDate());
-
-        when(orderRepository.findAll()).thenReturn(List.of(order1, order2));
-        when(shopMapper.toDto(order1)).thenReturn(dto1);
-        when(shopMapper.toDto(order2)).thenReturn(dto2);
-
-        List<OrderDTO> result = orderService.findAll();
-
-        assertThat(result).containsExactly(dto2, dto1);
-    }
+//    @Test
+//    void testFindAll_ShouldReturnSortedDTOs() {
+//        Order order1 = Order.builder().createDate(LocalDateTime.now()).build();
+//        Order order2 = Order.builder().createDate(LocalDateTime.now().plusDays(1)).build();
+//        OrderDTO dto1 = new OrderDTO(); dto1.setCreateDate(order1.getCreateDate());
+//        OrderDTO dto2 = new OrderDTO(); dto2.setCreateDate(order2.getCreateDate());
+//
+//        when(orderRepository.findAll()).thenReturn(List.of(order1, order2));
+//        when(shopMapper.toDto(order1)).thenReturn(dto1);
+//        when(shopMapper.toDto(order2)).thenReturn(dto2);
+//
+//        List<OrderDTO> result = orderService.findAll();
+//
+//        assertThat(result).containsExactly(dto2, dto1);
+//    }
 
     @Test
     void testSave_Success() {

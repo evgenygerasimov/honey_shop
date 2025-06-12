@@ -25,7 +25,7 @@ public class MainPageService {
         Map<String, List<Product>> map = new LinkedHashMap<>();
         for (Category cat : categories) {
             if (cat.getVisible() == true) {
-                List<Product> products = productRepository.findByCategory_CategoryIdOrderByShowcaseOrderAsc(cat.getCategoryId());
+                List<Product> products = productRepository.findByCategory_CategoryIdAndShowInShowcaseTrueOrderByShowcaseOrderAsc(cat.getCategoryId());
                 map.put(cat.getName(), products);
             }
         }

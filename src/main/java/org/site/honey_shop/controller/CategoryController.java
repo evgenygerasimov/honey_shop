@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,9 +31,13 @@ public class CategoryController {
     private final UserService userService;
 
     @GetMapping
-    public String showCategories(Model model) {
+    public String showCategories(Model model, @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "10")  int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updateDate").descending());
+        Page<Category> categoryPage = categoryService.findAll(pageable);
         model.addAttribute("authUserId", getCurrentUserId());
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categoriesPage", categoryPage);
         return "all-categories";
     }
 

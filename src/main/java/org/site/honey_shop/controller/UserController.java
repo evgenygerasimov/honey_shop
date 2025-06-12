@@ -10,6 +10,10 @@ import org.site.honey_shop.entity.User;
 import org.site.honey_shop.exception.ImageUploadException;
 import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,9 +37,14 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public String showUserList(Model model, HttpServletRequest request) {
+    public String showUserList(Model model, @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "10" ) int size,
+                               HttpServletRequest request) {
+
+        Pageable pageable = PageRequest.of(page, size,  Sort.by("updateDate").descending());
+        Page<UserResponseDTO> usersPage = userService.findAll(pageable);
         accessDeniedProcessing(request, model);
-        model.addAttribute("users", userService.findAll());
+        model.addAttribute("usersPage", usersPage);
         return "all-users";
     }
 

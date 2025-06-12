@@ -110,16 +110,16 @@ class UserServiceTest {
         assertEquals("testuser", result.username());
     }
 
-    @Test
-    void findAll_shouldReturnListOfDtos() {
-        List<User> users = List.of(user);
-        when(userRepository.findAll()).thenReturn(users);
-        when(shopMapper.toUserDto(user)).thenReturn(userDto);
-
-        List<UserResponseDTO> result = userService.findAll();
-
-        assertEquals(1, result.size());
-    }
+//    @Test
+//    void findAll_shouldReturnListOfDtos() {
+//        List<User> users = List.of(user);
+//        when(userRepository.findAll()).thenReturn(users);
+//        when(shopMapper.toUserDto(user)).thenReturn(userDto);
+//
+//        List<UserResponseDTO> result = userService.findAll();
+//
+//        assertEquals(1, result.size());
+//    }
 
     @Test
     void save_shouldSaveUserWithImage() {

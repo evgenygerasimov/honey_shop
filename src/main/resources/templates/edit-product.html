@@ -160,6 +160,13 @@
             </div>
 
             <div class="mb-3">
+                <label for="visible" class="form-label">Видимость на главной странице:</label>
+                <input type="hidden" name="_visible" value="off" />
+                <input type="checkbox" id="visible" name="visible" th:field="*{showInShowcase}" />
+                <div class="form-text">Если флажок установлен, то товар будет виден в каталоге.</div>
+            </div>
+
+            <div class="mb-3">
                 <label for="pictures" class="form-label">Изображения товара</label>
                 <input type="file" class="form-control" id="pictures" name="pictures" accept="image/*" multiple>
             </div>

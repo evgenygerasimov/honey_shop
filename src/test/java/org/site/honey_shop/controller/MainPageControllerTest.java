@@ -2,10 +2,12 @@ package org.site.honey_shop.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.site.honey_shop.entity.Category;
+import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.entity.Order;
+import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.MainPageService;
 import org.site.honey_shop.service.PaymentCashService;
 import org.springframework.mock.web.MockHttpSession;
@@ -13,7 +15,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.hamcrest.Matchers.instanceOf;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,39 +33,62 @@ class MainPageControllerTest {
     @Mock
     private PaymentCashService paymentCashService;
 
-    @InjectMocks
+    @Mock
+    private CategoryService categoryService;
+
+    @Mock
+    private MockHttpSession session;
+
     private MainPageController mainPageController;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        when(session.getId()).thenReturn("mock-session-id");
+
+        mainPageController = new MainPageController(mainPageService, paymentCashService, categoryService, session);
+
         var viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/views/");
         viewResolver.setSuffix(".html");
 
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(mainPageController)
+        mockMvc = MockMvcBuilders.standaloneSetup(mainPageController)
                 .setViewResolvers(viewResolver)
                 .build();
     }
-    @Mock
-    private MockHttpSession session;
 
-//    @Test
-//    void testShowHomePage() throws Exception {
-//        Map<String, List<Product>> mockCategorizedProducts = Map.of(
-//                "Category1", List.of(new Product(), new Product())
-//        );
-//        when(mainPageService.getAllProductsByCategoryAndSortByPrice()).thenReturn(mockCategorizedProducts);
-//        when(paymentCashService.getPaymentSuccess(session.getId())).thenReturn(true);
-//
-//        mockMvc.perform(get("/").session(session))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("index"))
-//                .andExpect(model().attribute("categorizedProducts", mockCategorizedProducts))
-//                .andExpect(model().attribute("successPayment", true));
-//    }
+    @Test
+    void testHomePage() throws Exception {
+        Product product = new Product();
+        product.setName("Test Product");
+        Category category = new Category();
+        category.setName("Category 1");
+
+        Map<String, List<Product>> categorizedProducts = Map.of(
+                category.getName(), List.of(product)
+        );
+
+        List<Category> visibleCategories = List.of(category);
+
+        when(mainPageService.getCategorizedProductsSorted()).thenReturn(categorizedProducts);
+        when(paymentCashService.getPaymentSuccess("mock-session-id")).thenReturn(true);
+        when(categoryService.findAllTrueVisibleCategories()).thenReturn(visibleCategories);
+
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"))
+                .andExpect(model().attributeExists("categorizedProducts"))
+                .andExpect(model().attribute("categorizedProducts", categorizedProducts))
+                .andExpect(model().attributeExists("successPayment"))
+                .andExpect(model().attribute("successPayment", true))
+                .andExpect(model().attributeExists("categories"))
+                .andExpect(model().attribute("categories", visibleCategories));
+
+        verify(mainPageService).getCategorizedProductsSorted();
+        verify(paymentCashService).getPaymentSuccess("mock-session-id");
+        verify(categoryService).findAllTrueVisibleCategories();
+    }
 
     @Test
     void testCart() throws Exception {

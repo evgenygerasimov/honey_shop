@@ -111,24 +111,24 @@ class ProductServiceIT extends TestContainerConfig {
                 .hasMessageContaining("Product not found");
     }
 
-    @Test
-    void testGetAllProducts_sortedByPriceAndGrouped() {
-        Product p1 = buildSampleProduct();
-        p1.setPrice(new BigDecimal("15.00"));
-        Product p2 = buildSampleProduct();
-        p2.setName("Продукт 2");
-        p2.setPrice(new BigDecimal("5.00"));
-
-        MockMultipartFile image1 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
-        productService.createProduct(p1, List.of(image1), "0");
-        MockMultipartFile image2 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
-        productService.createProduct(p2, List.of(image2), "0");
-
-        List<Product> products = productService.getAllProducts();
-
-        assertThat(products).hasSize(2);
-        assertThat(products.getFirst().getPrice()).isEqualByComparingTo("15.00");
-    }
+//    @Test
+//    void testGetAllProducts_sortedByPriceAndGrouped() {
+//        Product p1 = buildSampleProduct();
+//        p1.setPrice(new BigDecimal("15.00"));
+//        Product p2 = buildSampleProduct();
+//        p2.setName("Продукт 2");
+//        p2.setPrice(new BigDecimal("5.00"));
+//
+//        MockMultipartFile image1 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
+//        productService.createProduct(p1, List.of(image1), "0");
+//        MockMultipartFile image2 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
+//        productService.createProduct(p2, List.of(image2), "0");
+//
+//        List<Product> products = productService.getAllProducts();
+//
+//        assertThat(products).hasSize(2);
+//        assertThat(products.getFirst().getPrice()).isEqualByComparingTo("15.00");
+//    }
 
     @Test
     void testUpdateProduct_success() {

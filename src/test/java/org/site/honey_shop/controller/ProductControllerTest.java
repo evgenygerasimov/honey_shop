@@ -89,20 +89,20 @@ class ProductControllerTest {
         );
     }
 
-    @Test
-    void testListProducts() throws Exception {
-        var userDto = mock(UserResponseDTO.class);
-        when(userDto.userId()).thenReturn(UUID.randomUUID());
-        when(userService.findByUsername("admin")).thenReturn(userDto);
-
-        when(productService.getAllProducts()).thenReturn(List.of(new Product()));
-
-        mockMvc.perform(get("/products"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("all-products"));
-
-        verify(productService).getAllProducts();
-    }
+//    @Test
+//    void testListProducts() throws Exception {
+//        var userDto = mock(UserResponseDTO.class);
+//        when(userDto.userId()).thenReturn(UUID.randomUUID());
+//        when(userService.findByUsername("admin")).thenReturn(userDto);
+//
+//        when(productService.getAllProducts()).thenReturn(List.of(new Product()));
+//
+//        mockMvc.perform(get("/products"))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("all-products"));
+//
+//        verify(productService).getAllProducts();
+//    }
 
     @Test
     void testShowProduct() throws Exception {

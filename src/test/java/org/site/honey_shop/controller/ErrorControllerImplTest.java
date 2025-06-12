@@ -27,11 +27,23 @@ class ErrorControllerImplTest {
     }
 
     @Test
-    void testHandleError_ReturnsErrorViewWithModel() throws Exception {
+    void testHandleError_NoErrorMessageParam_ReturnsDefaultMessage() throws Exception {
         mockMvc.perform(get("/error"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
                 .andExpect(model().attributeExists("errorMessage"))
                 .andExpect(model().attribute("errorMessage", "Страница не найдена или произошла ошибка."));
+    }
+
+    @Test
+    void testHandleError_WithErrorMessageParam_ReturnsCustomMessage() throws Exception {
+        String customMessage = "Произошла нестандартная ошибка";
+
+        mockMvc.perform(get("/error")
+                        .param("errorMessage", customMessage))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
+                .andExpect(model().attributeExists("errorMessage"))
+                .andExpect(model().attribute("errorMessage", customMessage));
     }
 }

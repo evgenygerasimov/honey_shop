@@ -2,6 +2,7 @@ package org.site.honey_shop.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.site.honey_shop.dto.OrderDTO;
 import org.site.honey_shop.dto.UserResponseDTO;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.exception.DeleteProductException;
@@ -9,6 +10,10 @@ import org.site.honey_shop.exception.ProductCreationException;
 import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.ProductService;
 import org.site.honey_shop.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,9 +39,14 @@ public class ProductController {
     private final UserService userService;
 
     @GetMapping
-    public String listProducts(Model model) {
+    public String listProducts(Model model, @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updateDate").descending());
+        Page<Product> ordersPage = productService.getAllProducts(pageable);
+
+        model.addAttribute("productsPage", ordersPage);
         model.addAttribute("authUserId", getCurrentUserId());
-        model.addAttribute("products", productService.getAllProducts());
         return "all-products";
     }
 

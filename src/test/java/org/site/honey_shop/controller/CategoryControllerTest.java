@@ -16,9 +16,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -41,13 +43,11 @@ class CategoryControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(categoryController)
-                .build();
-
+        // мокаем аутентификацию
         var authentication = new UsernamePasswordAuthenticationToken("admin", null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // общий мок пользователя
         user = new UserResponseDTO(
                 UUID.randomUUID(),
                 "user",
@@ -62,25 +62,25 @@ class CategoryControllerTest {
                 null,
                 null
         );
+        // по умолчанию возвращаем user при любом вызове
+        when(userService.findByUsername("admin")).thenReturn(user);
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(categoryController)
+                .build();
     }
 
     @Test
     void testShowCategoryForm() throws Exception {
-        when(userService.findByUsername("admin"))
-                .thenReturn(user);
-
         mockMvc.perform(get("/categories/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("add-category"))
-                .andExpect(model().attributeExists("userId"))
+                .andExpect(model().attributeExists("authUserId"))
                 .andExpect(model().attributeExists("category"));
     }
 
     @Test
     void testCreateCategory_Valid() throws Exception {
-        when(userService.findByUsername("admin"))
-                .thenReturn(user);
-
         mockMvc.perform(post("/categories")
                         .param("name", "New Category"))
                 .andExpect(status().is3xxRedirection())
@@ -91,21 +91,15 @@ class CategoryControllerTest {
 
     @Test
     void testCreateCategory_WithValidationError() throws Exception {
-        when(userService.findByUsername("admin"))
-                .thenReturn(user);
-
         mockMvc.perform(post("/categories")
                         .param("name", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("add-category"))
-                .andExpect(model().attributeExists("userId"));
+                .andExpect(model().attributeExists("authUserId"));
     }
 
     @Test
     void testCreateCategory_DuplicateNameThrowsException() throws Exception {
-        when(userService.findByUsername("admin"))
-                .thenReturn(user);
-
         doThrow(new IllegalArgumentException("Category already exists"))
                 .when(categoryService).saveCategoryByName("Existing Category");
 
@@ -116,17 +110,14 @@ class CategoryControllerTest {
                 .andExpect(flash().attribute("errorMessage", "Category already exists"));
     }
 
-
-
     @Test
     void testShowCategories() throws Exception {
-        when(userService.findByUsername("admin")).thenReturn(user);
         when(categoryService.findAll()).thenReturn(List.of());
 
         mockMvc.perform(get("/categories"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("all-categories"))
-                .andExpect(model().attributeExists("userId"))
+                .andExpect(model().attributeExists("authUserId"))
                 .andExpect(model().attributeExists("categories"));
     }
 
@@ -142,6 +133,7 @@ class CategoryControllerTest {
                 .andExpect(redirectedUrl("/categories"));
 
         verify(categoryService).updateCategoryName(category);
+        // и действительно изменилось
         assert category.getName().equals("Updated Name");
     }
 
@@ -150,12 +142,11 @@ class CategoryControllerTest {
         UUID id = UUID.randomUUID();
         var category = new Category();
         when(categoryService.findById(id)).thenReturn(category);
-        when(userService.findByUsername("admin")).thenReturn(user);
 
         mockMvc.perform(get("/categories/edit/" + id))
                 .andExpect(status().isOk())
                 .andExpect(view().name("edit-category"))
-                .andExpect(model().attributeExists("userId"))
+                .andExpect(model().attributeExists("authUserId"))
                 .andExpect(model().attributeExists("category"));
     }
 
@@ -193,7 +184,7 @@ class CategoryControllerTest {
         mockMvc.perform(post("/categories/delete-image")
                         .param("imageFilename", file.getAbsolutePath())
                         .param("categoryId", categoryId))
-                .andExpect(status().isOk()) // File doesn't exist, still returns OK
+                .andExpect(status().isOk())
                 .andExpect(content().string("Photo from category was deleted successfully."));
 
         verify(categoryService).removeImageFromCategory(UUID.fromString(categoryId));
@@ -201,21 +192,22 @@ class CategoryControllerTest {
 
     @Test
     void testFullUpdateCategory() throws Exception {
-        var image = mock(MultipartFile.class);
         var category = new Category();
         category.setCategoryId(UUID.randomUUID());
+        category.setName("Test Category");
 
-        when(image.isEmpty()).thenReturn(true); // если образ не обязателен
 
-        mockMvc = MockMvcBuilders.standaloneSetup(categoryController).build();
+        when(categoryService.fullUpdateCategory(any(Category.class), any(MultipartFile.class)))
+                .thenReturn(category);
 
         mockMvc.perform(multipart("/categories/full-update-category")
                         .file("image", new byte[0])
+                        .param("name", category.getName())
+                        .param("categoryId", category.getCategoryId().toString())
                         .flashAttr("category", category))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/categories"));
 
         verify(categoryService).fullUpdateCategory(any(Category.class), any(MultipartFile.class));
     }
-
 }

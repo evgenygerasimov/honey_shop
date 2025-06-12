@@ -13,6 +13,8 @@ import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -55,11 +57,9 @@ public class UserService {
         return shopMapper.toUserDto(user);
     }
 
-    public List<UserResponseDTO> findAll() {
+    public Page<UserResponseDTO> findAll(Pageable pageable) {
         log.info("Find all users...");
-        return userRepository.findAll().stream()
-                .map(shopMapper::toUserDto)
-                .toList();
+        return userRepository.findAll(pageable).map(shopMapper::toUserDto);
     }
 
     public User save(User user, MultipartFile image) {
