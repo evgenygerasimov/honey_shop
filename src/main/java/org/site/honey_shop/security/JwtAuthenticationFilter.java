@@ -19,8 +19,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Optional;
+
+import static java.util.Arrays.stream;
 
 @Component
 @RequiredArgsConstructor
@@ -58,6 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+
+
         try {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
@@ -67,12 +70,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (accessToken.isPresent()) {
                     String access = accessToken.get();
 
-                    if (!jwtService.isAccessTokenExpired(access)) {
+                    if (!jwtService.isAccessTokenExpiredAndInvalid(access)) {
                         authenticateUser(access);
                     } else if (refreshToken.isPresent()) {
                         String refresh = refreshToken.get();
 
-                        if (!jwtService.isRefreshTokenExpired(refresh) &&
+                        if (!jwtService.isRefreshTokenExpiredAndInvalid(refresh) &&
                                 jwtService.findByRefreshToken(refresh).isRefreshTokenValid()) {
 
                             Token newToken = authService.refreshToken(refresh);
@@ -83,13 +86,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             setCookie(response, "access_token", newToken.getAccessToken());
                             setCookie(response, "refresh_token", newToken.getRefreshToken());
                         } else {
-                            // Рефреш токен тоже просрочен или не валиден
                             SecurityContextHolder.clearContext();
                             redirectToLogin(response);
-                            return;  // Прерываем цепочку, чтобы не пускать дальше
+                            return;
                         }
                     } else {
-                        // Нет рефреш токена и access токен просрочен
                         SecurityContextHolder.clearContext();
                         redirectToLogin(response);
                         return;
@@ -111,7 +112,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> getCookie(Cookie[] cookies, String name) {
-        return Arrays.stream(cookies)
+        return stream(cookies)
                 .filter(c -> c.getName().equals(name))
                 .map(Cookie::getValue)
                 .findFirst();

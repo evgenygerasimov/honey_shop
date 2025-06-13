@@ -346,5 +346,16 @@ h2.text-primary {
     opacity: 0.5;
 }
 
+.custom-yellow-btn {
+    background-color: #f8d108;
+    border: none;
+    color: white;
+}
+
+.custom-yellow-btn:hover {
+    background-color: #e0bd00;
+    color: white;
+}
+
 
 

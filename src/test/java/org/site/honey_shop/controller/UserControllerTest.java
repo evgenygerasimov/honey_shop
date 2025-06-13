@@ -15,6 +15,9 @@ import org.site.honey_shop.exception.ImageUploadException;
 import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.repository.UserRepository;
 import org.site.honey_shop.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +27,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -108,15 +111,16 @@ class UserControllerTest {
 
     }
 
-//    @Test
-//    void testShowUserList() throws Exception {
-//        when(userService.findAll()).thenReturn(Collections.singletonList(userResponseDTO));
-//
-//        mockMvc.perform(get("/users/list"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("all-users"))
-//                .andExpect(model().attributeExists("users"));
-//    }
+    @Test
+    void testShowUserList() throws Exception {
+        Page<UserResponseDTO> emptyPage = new PageImpl<>(List.of());
+        when(userService.findAll(any(Pageable.class))).thenReturn(emptyPage);
+
+        mockMvc.perform(get("/users/list"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("all-users"))
+                .andExpect(model().attributeExists("usersPage"));
+    }
 
     @Test
     void testShowCreateUserForm() throws Exception {

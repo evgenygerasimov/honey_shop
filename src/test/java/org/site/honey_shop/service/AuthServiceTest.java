@@ -89,8 +89,8 @@ class AuthServiceTest {
         existingToken.setAccessTokenValid(true);
 
         when(jwtService.getTokens()).thenReturn(List.of(existingToken));
-        when(jwtService.isAccessTokenExpired(existingToken.getAccessToken())).thenReturn(false);
-        when(jwtService.isRefreshTokenExpired(existingToken.getRefreshToken())).thenReturn(false);
+        when(jwtService.isAccessTokenExpiredAndInvalid(existingToken.getAccessToken())).thenReturn(false);
+        when(jwtService.isRefreshTokenExpiredAndInvalid(existingToken.getRefreshToken())).thenReturn(false);
 
         Token token = authService.login(username, "password", response);
 
@@ -126,7 +126,7 @@ class AuthServiceTest {
         storedToken.setRefreshTokenValid(true);
 
         when(jwtService.findByRefreshToken(oldRefresh)).thenReturn(storedToken);
-        when(jwtService.isRefreshTokenExpired(oldRefresh)).thenReturn(false);
+        when(jwtService.isRefreshTokenExpiredAndInvalid(oldRefresh)).thenReturn(false);
         when(jwtService.generateAccessToken(username)).thenReturn(newAccess);
         when(jwtService.generateRefreshToken(username)).thenReturn(newRefresh);
         when(jwtService.saveToken(eq(username), eq(newAccess), eq(newRefresh)))
@@ -150,7 +150,7 @@ class AuthServiceTest {
         storedToken.setRefreshTokenValid(true);
 
         when(jwtService.findByRefreshToken(expiredRefresh)).thenReturn(storedToken);
-        when(jwtService.isRefreshTokenExpired(expiredRefresh)).thenReturn(true);
+        when(jwtService.isRefreshTokenExpiredAndInvalid(expiredRefresh)).thenReturn(true);
         when(jwtService.extractUserName(expiredRefresh)).thenReturn(username);
 
         // No new tokens will be generated

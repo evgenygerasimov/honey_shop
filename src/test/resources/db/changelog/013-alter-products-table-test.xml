@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="13-alter-products-table" author="dev">
+        <dropForeignKeyConstraint
+                baseTableName="products"
+                constraintName="fk_product_category"/>
+
+        <modifyDataType
+                tableName="products"
+                columnName="category_id"
+                newDataType="uuid"/>
+
+        <dropNotNullConstraint
+                tableName="products"
+                columnName="category_id"
+                columnDataType="uuid"/>
+
+        <addForeignKeyConstraint
+                baseTableName="products"
+                baseColumnNames="category_id"
+                constraintName="fk_product_category"
+                referencedTableName="categories"
+                referencedColumnNames="category_id"
+                onDelete="SET NULL"/>
+    </changeSet>
+</databaseChangeLog>

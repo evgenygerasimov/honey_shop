@@ -12,6 +12,9 @@ import org.site.honey_shop.entity.*;
 import org.site.honey_shop.exception.OrderCreateException;
 import org.site.honey_shop.service.OrderService;
 import org.site.honey_shop.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -83,36 +86,37 @@ class OrderControllerTest {
                 .andExpect(model().attributeExists("authUserId"));  // тк в модели еще authUserId добавляется
     }
 
-//    @Test
-//    void testOrdersList() throws Exception {
-//        UUID userId = UUID.randomUUID();
-//        when(userService.findByUsername(anyString())).thenReturn(new UserResponseDTO(userId,
-//                        "testuser",
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        Role.ROLE_SUPER_ADMIN,
-//                        true,
-//                        null
-//                )
-//        );
-//
-//        when(orderService.findAll()).thenReturn(List.of());
-//
-//        SecurityContextHolder.getContext().setAuthentication(
-//                new UsernamePasswordAuthenticationToken("admin", "password")
-//        );
-//
-//        mockMvc.perform(get("/orders").principal(() -> "admin"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("all-orders"))
-//                .andExpect(model().attribute("authUserId", userId.toString()))
-//                .andExpect(model().attributeExists("orders"));
-//    }
+    @Test
+    void testOrdersList() throws Exception {
+        UUID userId = UUID.randomUUID();
+        when(userService.findByUsername(anyString())).thenReturn(new UserResponseDTO(userId,
+                        "testuser",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        Role.ROLE_SUPER_ADMIN,
+                        true,
+                        null
+                )
+        );
+
+        Page<OrderDTO> emptyPage = new PageImpl<>(List.of());
+        when(orderService.findAll(any(Pageable.class))).thenReturn(emptyPage);
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("admin", "password")
+        );
+
+        mockMvc.perform(get("/orders").principal(() -> "admin"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("all-orders"))
+                .andExpect(model().attribute("authUserId", userId.toString()))
+                .andExpect(model().attributeExists("ordersPage"));
+    }
 
     @Test
     void testCreateOrder_WithErrors() throws Exception {

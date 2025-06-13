@@ -25,23 +25,6 @@ public class AuthService {
     private final JwtService jwtService;
 
     public Token login(String username, String password, HttpServletResponse response) {
-        log.info("Login attempt for user: {}", username);
-        for (Token token : jwtService.getTokens()) {
-            if (token.getUsername().equals(username) && token.isAccessTokenValid()
-                    && !jwtService.isAccessTokenExpired(token.getAccessToken())
-                    && !jwtService.isRefreshTokenExpired(token.getRefreshToken())) {
-                log.info("User {} already logged in", username);
-                addTokensToCookie(response, token.getAccessToken(), token.getRefreshToken());
-                return token;
-            } else {
-                for (Token expiredToken : jwtService.getTokens()) {
-                    if (expiredToken.getUsername().equals(username)) {
-                        jwtService.invalidateToken(expiredToken);
-                        log.info("Invalidated expired token for user: {}", username);
-                    }
-                }
-            }
-        }
 
         try {
             log.info("Trying to login user: {}", username);
@@ -83,7 +66,7 @@ public class AuthService {
     public Token refreshToken(String refreshToken) {
         log.info("Trying to refresh token: {}", refreshToken);
         Token storedToken = jwtService.findByRefreshToken(refreshToken);
-        if (jwtService.isRefreshTokenExpired(refreshToken)) {
+        if (jwtService.isRefreshTokenExpiredAndInvalid(refreshToken)) {
             log.info("Refresh token expired for user: {}", jwtService.extractUserName(refreshToken));
             storedToken.setRefreshTokenValid(false);
             jwtService.invalidateToken(storedToken);

@@ -9,6 +9,9 @@ import org.site.honey_shop.dto.UserResponseDTO;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,11 +46,9 @@ class CategoryControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // мокаем аутентификацию
         var authentication = new UsernamePasswordAuthenticationToken("admin", null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // общий мок пользователя
         user = new UserResponseDTO(
                 UUID.randomUUID(),
                 "user",
@@ -62,7 +63,7 @@ class CategoryControllerTest {
                 null,
                 null
         );
-        // по умолчанию возвращаем user при любом вызове
+
         when(userService.findByUsername("admin")).thenReturn(user);
 
         mockMvc = MockMvcBuilders
@@ -112,13 +113,14 @@ class CategoryControllerTest {
 
     @Test
     void testShowCategories() throws Exception {
-        when(categoryService.findAll()).thenReturn(List.of());
+        Page<Category> emptyPage = new PageImpl<>(List.of());
+        when(categoryService.findAll(any(Pageable.class))).thenReturn(emptyPage);
 
         mockMvc.perform(get("/categories"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("all-categories"))
                 .andExpect(model().attributeExists("authUserId"))
-                .andExpect(model().attributeExists("categories"));
+                .andExpect(model().attributeExists("categoriesPage"));
     }
 
     @Test

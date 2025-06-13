@@ -115,7 +115,7 @@ class JwtServiceIT extends TestContainerConfig {
     }
 
     @Test
-    void testIsRefreshTokenExpired_returnsTrue_whenExpired() {
+    void testIsRefreshTokenExpired_returnsTrue_whenExpiredAndInvalid() {
         String username = "testuser";
         String accessToken = jwtService.generateAccessToken(username);
         String refreshToken = jwtService.generateRefreshToken(username);
@@ -124,13 +124,13 @@ class JwtServiceIT extends TestContainerConfig {
         token.setCreateDate(token.getCreateDate().minusDays(8));
         tokenRepository.save(token);
 
-        boolean isExpired = jwtService.isRefreshTokenExpired(refreshToken);
+        boolean isExpired = jwtService.isRefreshTokenExpiredAndInvalid(refreshToken);
 
         assertThat(isExpired).isTrue();
     }
 
     @Test
-    void testIsAccessTokenExpired_returnsTrue_whenExpired() {
+    void testIsAccessTokenExpired_returnsTrue_whenExpiredAndInvalid() {
         String username = "testuser";
         String accessToken = jwtService.generateAccessToken(username);
         String refreshToken = jwtService.generateRefreshToken(username);
@@ -139,7 +139,7 @@ class JwtServiceIT extends TestContainerConfig {
         token.setCreateDate(token.getCreateDate().minusMinutes(16));
         tokenRepository.save(token);
 
-        boolean isExpired = jwtService.isAccessTokenExpired(accessToken);
+        boolean isExpired = jwtService.isAccessTokenExpiredAndInvalid(accessToken);
 
         assertThat(isExpired).isTrue();
     }

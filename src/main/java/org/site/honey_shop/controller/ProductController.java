@@ -2,7 +2,6 @@ package org.site.honey_shop.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.site.honey_shop.dto.OrderDTO;
 import org.site.honey_shop.dto.UserResponseDTO;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.exception.DeleteProductException;

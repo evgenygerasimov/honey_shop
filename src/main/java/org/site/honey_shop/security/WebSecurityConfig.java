@@ -17,6 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
@@ -75,9 +77,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 )
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            request.getSession().setAttribute("accessDeniedMessage", "У вас нет прав на выполнение этого действия.");
-                            String referer = request.getHeader("Referer");
-                            response.sendRedirect(referer != null ? referer : "/");
+                            response.sendRedirect("/error?errorMessage=" + URLEncoder.encode("У вас нет прав на выполнение этого действия.", StandardCharsets.UTF_8));
                         })
                 )
                 .oauth2Login(oAuth2Login -> oAuth2Login
@@ -86,6 +86,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 
     @Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource) {

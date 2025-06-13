@@ -14,6 +14,9 @@ import org.site.honey_shop.exception.ProductCreationException;
 import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.ProductService;
 import org.site.honey_shop.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -89,20 +92,22 @@ class ProductControllerTest {
         );
     }
 
-//    @Test
-//    void testListProducts() throws Exception {
-//        var userDto = mock(UserResponseDTO.class);
-//        when(userDto.userId()).thenReturn(UUID.randomUUID());
-//        when(userService.findByUsername("admin")).thenReturn(userDto);
-//
-//        when(productService.getAllProducts()).thenReturn(List.of(new Product()));
-//
-//        mockMvc.perform(get("/products"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("all-products"));
-//
-//        verify(productService).getAllProducts();
-//    }
+    @Test
+    void testListProducts() throws Exception {
+        var userDto = mock(UserResponseDTO.class);
+        when(userDto.userId()).thenReturn(UUID.randomUUID());
+        when(userService.findByUsername("admin")).thenReturn(userDto);
+
+
+        Page<Product> emptyPage = new PageImpl<>(List.of());
+        when(productService.getAllProducts(any(Pageable.class))).thenReturn(emptyPage);
+
+        mockMvc.perform(get("/products"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("all-products"));
+
+        verify(productService).getAllProducts(any(Pageable.class));
+    }
 
     @Test
     void testShowProduct() throws Exception {

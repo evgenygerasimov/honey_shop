@@ -33,7 +33,6 @@ public class CategoryController {
     @GetMapping
     public String showCategories(Model model, @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "10")  int size) {
-
         Pageable pageable = PageRequest.of(page, size, Sort.by("updateDate").descending());
         Page<Category> categoryPage = categoryService.findAll(pageable);
         model.addAttribute("authUserId", getCurrentUserId());

@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,7 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -40,11 +38,6 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
             return;
         }
 
-        List<Token> userTokens = getUserTokens(username);
-
-        if (isTokenValid(response, userTokens, username, userDetails)) return;
-        invalidateExpiredToken(userTokens, username);
-
         UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
@@ -61,12 +54,6 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
         response.sendRedirect("/users/" + userService.findByUsername(username).userId());
     }
 
-    private List<Token> getUserTokens(String username) {
-        return jwtService.getTokens().stream()
-                .filter(t -> t.getUsername().equals(username))
-                .toList();
-    }
-
     private static String extractUsernameFromEmail(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         DefaultOAuth2User oauth2User = (DefaultOAuth2User) principal;
@@ -77,36 +64,6 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
                 .toString())
                 .findFirst()
                 .orElseThrow();
-    }
-
-    private void invalidateExpiredToken(List<Token> userTokens, String username) {
-        for (Token token : userTokens) {
-            jwtService.invalidateToken(token);
-            log.info("Invalidated expired token for user: {}", username);
-        }
-    }
-
-    private boolean isTokenValid(HttpServletResponse response, List<Token> userTokens, String username, UserDetails userDetails) throws IOException {
-        for (Token token : userTokens) {
-            boolean accessValid = token.isAccessTokenValid() && !jwtService.isAccessTokenExpired(token.getAccessToken());
-            boolean refreshValid = !jwtService.isRefreshTokenExpired(token.getRefreshToken());
-
-            if (accessValid && refreshValid) {
-                log.info("User {} already logged in with valid tokens", username);
-
-                addTokensToCookie(response, token.getAccessToken(), token.getRefreshToken());
-                SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities())
-                );
-
-                response.sendRedirect("/users/" + userService.findByUsername(username).userId());
-                return true;
-            }
-        }
-        return false;
     }
 
     private void addTokensToCookie(HttpServletResponse response, String accessToken, String refreshToken) {
