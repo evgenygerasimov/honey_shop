@@ -15,10 +15,11 @@ import org.site.honey_shop.entity.Token;
 import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,41 +62,42 @@ class AuthServiceTest {
         String accessToken = "access-token";
         String refreshToken = "refresh-token";
 
-        Authentication auth = mock(Authentication.class);
+        Authentication authentication = mock(Authentication.class);
         UserDetails userDetails = mock(UserDetails.class);
 
-        when(jwtService.getTokens()).thenReturn(new ArrayList<>());
-        when(authenticationManager.authenticate(any())).thenReturn(auth);
-        when(auth.getPrincipal()).thenReturn(userDetails);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getUsername()).thenReturn(username);
         when(jwtService.generateAccessToken(username)).thenReturn(accessToken);
         when(jwtService.generateRefreshToken(username)).thenReturn(refreshToken);
-        when(jwtService.saveToken(eq(username), eq(accessToken), eq(refreshToken)))
-                .thenReturn(token);
+        when(jwtService.saveToken(username, accessToken, refreshToken)).thenReturn(token);
 
-        Token token = authService.login(username, password, response);
+        Token result = authService.login(username, password, response);
 
-        assertEquals(username, token.getUsername());
-        assertEquals(accessToken, token.getAccessToken());
-        assertEquals(refreshToken, token.getRefreshToken());
+        assertNotNull(result);
+        assertEquals(username, result.getUsername());
+        assertEquals(accessToken, result.getAccessToken());
+        assertEquals(refreshToken, result.getRefreshToken());
 
-        verify(response, times(2)).addCookie(any(Cookie.class));
-    }
+        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
+        verify(response, times(2)).addCookie(cookieCaptor.capture());
 
-    @Test
-    void testLoginWithExistingValidToken() {
-        String username = "testUser";
-        Token existingToken = token;
-        existingToken.setAccessTokenValid(true);
+        List<Cookie> cookies = cookieCaptor.getAllValues();
+        assertEquals(2, cookies.size());
 
-        when(jwtService.getTokens()).thenReturn(List.of(existingToken));
-        when(jwtService.isAccessTokenExpiredAndInvalid(existingToken.getAccessToken())).thenReturn(false);
-        when(jwtService.isRefreshTokenExpiredAndInvalid(existingToken.getRefreshToken())).thenReturn(false);
+        Cookie accessCookie = cookies.stream().filter(c -> "access_token".equals(c.getName())).findFirst().orElse(null);
+        Cookie refreshCookie = cookies.stream().filter(c -> "refresh_token".equals(c.getName())).findFirst().orElse(null);
 
-        Token token = authService.login(username, "password", response);
+        assertNotNull(accessCookie);
+        assertEquals(accessToken, accessCookie.getValue());
+        assertTrue(accessCookie.isHttpOnly());
+        assertEquals("/", accessCookie.getPath());
 
-        assertEquals(existingToken, token);
-        verifyNoInteractions(authenticationManager);
+        assertNotNull(refreshCookie);
+        assertEquals(refreshToken, refreshCookie.getValue());
+        assertTrue(refreshCookie.isHttpOnly());
+        assertEquals("/", refreshCookie.getPath());
     }
 
     @Test
@@ -103,22 +105,50 @@ class AuthServiceTest {
         String username = "badUser";
         String password = "badPass";
 
-        when(jwtService.getTokens()).thenReturn(new ArrayList<>());
-        when(authenticationManager.authenticate(any()))
-                .thenThrow(new org.springframework.security.core.AuthenticationException("Bad credentials") {
-                });
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new AuthenticationException("Bad credentials") {});
 
-        assertThrows(MyAuthenticationException.class, () -> {
+        MyAuthenticationException ex = assertThrows(MyAuthenticationException.class, () -> {
             authService.login(username, password, response);
         });
+
+        assertEquals("Неверный логин или пароль", ex.getMessage());
     }
 
     @Test
-    void testRefreshTokenSuccess() {
+    void testRefreshTokenSuccessAndExpiredHandled() {
         String oldRefresh = "old-refresh-token";
-        String newAccess = "access-token";
-        String newRefresh = "refresh-token";
         String username = "testUser";
+        String newAccess = "new-access-token";
+        String newRefresh = "new-refresh-token";
+
+        Token storedToken = new Token();
+        storedToken.setUsername(username);
+        storedToken.setRefreshToken(oldRefresh);
+        storedToken.setRefreshTokenValid(true);
+
+        when(jwtService.findByRefreshToken(oldRefresh)).thenReturn(storedToken);
+        when(jwtService.isRefreshTokenExpiredAndInvalid(oldRefresh)).thenReturn(true);
+        when(jwtService.generateAccessToken(username)).thenReturn(newAccess);
+        when(jwtService.generateRefreshToken(username)).thenReturn(newRefresh);
+        when(jwtService.saveToken(username, newAccess, newRefresh)).thenReturn(token);
+        when(jwtService.extractUserName(oldRefresh)).thenReturn(username);
+
+        Token result = authService.refreshToken(oldRefresh);
+
+        verify(jwtService).invalidateToken(storedToken);
+        assertFalse(storedToken.isRefreshTokenValid());
+
+        assertNotNull(result);
+        assertEquals(token, result);
+    }
+
+    @Test
+    void testRefreshTokenNotExpired() {
+        String oldRefresh = "refresh-token";
+        String username = "testUser";
+        String newAccess = "new-access-token";
+        String newRefresh = "new-refresh-token";
 
         Token storedToken = new Token();
         storedToken.setUsername(username);
@@ -129,40 +159,20 @@ class AuthServiceTest {
         when(jwtService.isRefreshTokenExpiredAndInvalid(oldRefresh)).thenReturn(false);
         when(jwtService.generateAccessToken(username)).thenReturn(newAccess);
         when(jwtService.generateRefreshToken(username)).thenReturn(newRefresh);
-        when(jwtService.saveToken(eq(username), eq(newAccess), eq(newRefresh)))
-                .thenReturn(token);
-        when(jwtService.extractUserName(any())).thenReturn(username);
+        when(jwtService.saveToken(username, newAccess, newRefresh)).thenReturn(token);
 
         Token result = authService.refreshToken(oldRefresh);
 
-        assertEquals(newAccess, result.getAccessToken());
-        assertEquals(newRefresh, result.getRefreshToken());
-    }
+        verify(jwtService, never()).invalidateToken(storedToken);
 
-    @Test
-    void testRefreshTokenExpired() {
-        String expiredRefresh = "expired-refresh-token";
-        String username = "user";
-
-        Token storedToken = new Token();
-        storedToken.setUsername(username);
-        storedToken.setRefreshToken(expiredRefresh);
-        storedToken.setRefreshTokenValid(true);
-
-        when(jwtService.findByRefreshToken(expiredRefresh)).thenReturn(storedToken);
-        when(jwtService.isRefreshTokenExpiredAndInvalid(expiredRefresh)).thenReturn(true);
-        when(jwtService.extractUserName(expiredRefresh)).thenReturn(username);
-
-        // No new tokens will be generated
-        Token result = authService.refreshToken(expiredRefresh);
-
-        verify(jwtService).invalidateToken(storedToken);
-        assertFalse(storedToken.isRefreshTokenValid());
+        assertNotNull(result);
+        assertEquals(token, result);
     }
 
     @Test
     void testLogout() {
         when(jwtService.findByAccessToken(token.getAccessToken())).thenReturn(token);
+
         HttpSession session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
 
@@ -174,10 +184,15 @@ class AuthServiceTest {
         verify(response, times(2)).addCookie(cookieCaptor.capture());
 
         List<Cookie> cookies = cookieCaptor.getAllValues();
-
         assertEquals(2, cookies.size());
+
         for (Cookie c : cookies) {
+            assertNull(c.getValue());
             assertEquals(0, c.getMaxAge());
+            assertTrue(c.isHttpOnly());
+            assertEquals("/", c.getPath());
         }
+
+        verify(request.getSession()).invalidate();
     }
 }

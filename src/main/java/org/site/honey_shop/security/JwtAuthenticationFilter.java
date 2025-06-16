@@ -32,7 +32,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthService authService;
     private final UserDetailsService userDetailsService;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -58,8 +57,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             return;
         }
-
-
 
         try {
             Cookie[] cookies = request.getCookies();

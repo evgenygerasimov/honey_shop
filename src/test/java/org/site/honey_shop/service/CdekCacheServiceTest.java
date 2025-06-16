@@ -141,7 +141,6 @@ class CdekCacheServiceTest {
         verify(mockFuture).get(anyLong(), any());
     }
 
-
     @Test
     void testScheduledRefreshWithTimeout_timeout() throws Exception {
         Future<Object> mockFuture = mock(Future.class);
@@ -152,5 +151,4 @@ class CdekCacheServiceTest {
 
         verify(mockFuture, times(3)).cancel(true);
     }
-
 }

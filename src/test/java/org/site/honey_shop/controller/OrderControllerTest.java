@@ -83,7 +83,7 @@ class OrderControllerTest {
                 .andExpect(view().name("order-details"))
                 .andExpect(model().attributeExists("order"))
                 .andExpect(model().attributeExists("productsMap"))
-                .andExpect(model().attributeExists("authUserId"));  // тк в модели еще authUserId добавляется
+                .andExpect(model().attributeExists("authUserId"));
     }
 
     @Test

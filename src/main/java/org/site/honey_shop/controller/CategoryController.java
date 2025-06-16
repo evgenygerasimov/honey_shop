@@ -47,23 +47,6 @@ public class CategoryController {
         return "add-category";
     }
 
-    @PostMapping
-    public String createCategoryByName(@Valid @ModelAttribute Category category,
-                                       BindingResult result,
-                                       RedirectAttributes redirectAttributes,
-                                       Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("authUserId", getCurrentUserId());
-            return "add-category";
-        }
-        try {
-            categoryService.saveCategoryByName(category.getName());
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/categories/new";
-        }
-        return "redirect:/categories";
-    }
 
     @PostMapping("/create-with-image")
     public String fullCreateCategory(@Valid @ModelAttribute Category category,

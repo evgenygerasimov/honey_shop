@@ -11,16 +11,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.exception.DeleteProductException;
+import org.site.honey_shop.exception.OrderCreateException;
 import org.site.honey_shop.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,9 +39,8 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        productService.getClass().getDeclaredFields()[0].setAccessible(true);
         try {
-            java.lang.reflect.Field uploadDir = productService.getClass().getDeclaredField("UPLOAD_DIRECTORY");
+            var uploadDir = productService.getClass().getDeclaredField("UPLOAD_DIRECTORY");
             uploadDir.setAccessible(true);
             uploadDir.set(productService, "uploads");
         } catch (Exception e) {
@@ -70,9 +69,20 @@ class ProductServiceTest {
     }
 
     @Test
+    void getAllProducts_shouldReturnPage() {
+        Page<Product> page = new PageImpl<>(List.of(Product.builder().name("P1").build()));
+        Pageable pageable = mock(Pageable.class);
+        when(productRepository.findAll(pageable)).thenReturn(page);
+
+        Page<Product> result = productService.getAllProducts(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        verify(productRepository).findAll(pageable);
+    }
+
+    @Test
     void deleteProduct_shouldDelete() {
         UUID id = UUID.randomUUID();
-
         when(productRepository.existsById(id)).thenReturn(true);
 
         productService.deleteProduct(id);
@@ -83,7 +93,6 @@ class ProductServiceTest {
     @Test
     void deleteProduct_shouldThrowCustomException() {
         UUID id = UUID.randomUUID();
-
         when(productRepository.existsById(id)).thenReturn(true);
         doThrow(new RuntimeException()).when(productRepository).deleteById(id);
 
@@ -92,15 +101,22 @@ class ProductServiceTest {
 
     @Test
     void updateStockForReduction_shouldDecreaseStock() {
-        Product product = Product.builder().stockQuantity(10).build();
+        Product product = Product.builder().stockQuantity(10).name("Honey").build();
         productService.updateStockForReduction(product, 3);
         assertEquals(7, product.getStockQuantity());
         verify(productRepository).save(product);
     }
 
     @Test
+    void updateStockForReduction_shouldThrowIfInsufficient() {
+        Product product = Product.builder().stockQuantity(2).name("Honey").build();
+        assertThrows(OrderCreateException.class, () -> productService.updateStockForReduction(product, 3));
+        verify(productRepository, never()).save(any());
+    }
+
+    @Test
     void updateStockForAddition_shouldIncreaseStock() {
-        Product product = Product.builder().stockQuantity(10).build();
+        Product product = Product.builder().stockQuantity(10).name("Honey").build();
         productService.updateStockForAddition(product, 5);
         assertEquals(15, product.getStockQuantity());
         verify(productRepository).save(product);
@@ -121,9 +137,7 @@ class ProductServiceTest {
 
     @Test
     void createProduct_shouldSaveProductWithOrderedImages() {
-        Category category = Category.builder()
-                .name("Honey")
-                .build();
+        Category category = Category.builder().name("Honey").build();
 
         Product product = Product.builder()
                 .name("Test")
@@ -154,5 +168,41 @@ class ProductServiceTest {
         assertEquals("Test", saved.getName());
         assertEquals(2, saved.getImages().size());
         assertTrue(saved.getImages().get(0).contains("image2.jpg"));
+    }
+
+    @Test
+    void updateProduct_shouldUpdateExistingProductWithImageOrder() {
+        UUID id = UUID.randomUUID();
+        Category category = Category.builder().name("Honey").build();
+        Product existing = Product.builder()
+                .productId(id)
+                .images(new ArrayList<>(List.of("old.jpg")))
+                .build();
+        Product input = Product.builder()
+                .productId(id)
+                .name("Updated")
+                .description("desc")
+                .shortDescription("short")
+                .price(new BigDecimal(100))
+                .length(10.0)
+                .width(10.0)
+                .height(10.0)
+                .weight(500.0)
+                .stockQuantity(10)
+                .category(category)
+                .showInShowcase(true)
+                .build();
+
+        when(productRepository.findById(id)).thenReturn(Optional.of(existing));
+        when(categoryService.findByName("Honey")).thenReturn(category);
+
+        productService.updateProduct(input, Collections.emptyList(), "new1.jpg,new2.jpg");
+
+        ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).save(captor.capture());
+        Product updated = captor.getValue();
+
+        assertEquals("Updated", updated.getName());
+        assertEquals(List.of("uploads/new1.jpg", "uploads/new2.jpg"), updated.getImages());
     }
 }

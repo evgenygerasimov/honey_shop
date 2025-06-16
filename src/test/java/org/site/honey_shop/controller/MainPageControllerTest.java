@@ -2,8 +2,9 @@ package org.site.honey_shop.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.site.honey_shop.entity.Category;
 import org.site.honey_shop.entity.Product;
 import org.site.honey_shop.entity.Order;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@ExtendWith(MockitoExtension.class)
 class MainPageControllerTest {
 
     private MockMvc mockMvc;
@@ -43,8 +45,6 @@ class MainPageControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         when(session.getId()).thenReturn("mock-session-id");
 
         mainPageController = new MainPageController(mainPageService, paymentCashService, categoryService, session);

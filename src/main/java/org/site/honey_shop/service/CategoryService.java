@@ -32,18 +32,6 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
-    public Category saveCategoryByName(String categoryName) {
-        if (categoryRepository.existsByName(categoryName)) {
-            log.error("Category name {} already exist", categoryName);
-            throw new IllegalArgumentException("Категория с таким названием уже существует!");
-        }
-        Category category = Category.builder()
-                .name(categoryName)
-                .build();
-        log.info("Attempt to save category by name: {}", categoryName);
-        return categoryRepository.save(category);
-    }
-
     public Category saveCategoryWithImage(Category category, MultipartFile image) {
         String imageUrl = imageSelectionProcessing(image);
         if (categoryRepository.existsByName(category.getName())) {
@@ -52,6 +40,7 @@ public class CategoryService {
          category = Category.builder()
                 .name(category.getName())
                 .imageUrl(imageUrl)
+                 .showcaseOrder(category.getShowcaseOrder())
                 .visible(category.getVisible())
                 .build();
         log.info("Attempt to save category: {}", category.getName());

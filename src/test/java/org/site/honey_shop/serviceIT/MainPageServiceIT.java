@@ -16,8 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -27,10 +26,10 @@ class MainPageServiceIT extends TestContainerConfig {
     private MainPageService mainPageService;
 
     @Autowired
-    private ProductRepository productRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private ProductRepository productRepository;
 
     @BeforeEach
     void clearDb() {
@@ -38,44 +37,51 @@ class MainPageServiceIT extends TestContainerConfig {
         categoryRepository.deleteAll();
     }
 
-//    @Test
-//    void testGetAllProductsByCategoryAndSortByPrice_success() {
-//        Category honey = categoryRepository.saveCategoryWithImage(Category.builder().name("Honey").build());
-//        Category tea = categoryRepository.saveCategoryWithImage(Category.builder().name("Tea").build());
-//
-//        productRepository.saveCategoryWithImage(createValidProduct("Acacia Honey", BigDecimal.valueOf(12.99), honey));
-//        productRepository.saveCategoryWithImage(createValidProduct("Wildflower Honey", BigDecimal.valueOf(9.99), honey));
-//        productRepository.saveCategoryWithImage(createValidProduct("Green Tea", BigDecimal.valueOf(5.49), tea));
-//        productRepository.saveCategoryWithImage(createValidProduct("Black Tea", BigDecimal.valueOf(4.99), tea));
-//
-//        Map<String, List<Product>> result = mainPageService.getAllProductsByCategoryAndSortByPrice();
-//
-//        assertThat(result).hasSize(2);
-//
-//        List<Product> honeyProducts = result.get("Honey");
-//        assertThat(honeyProducts).hasSize(2);
-//        assertThat(honeyProducts.get(0).getName()).isEqualTo("Wildflower Honey");
-//        assertThat(honeyProducts.get(1).getName()).isEqualTo("Acacia Honey");
-//
-//        List<Product> teaProducts = result.get("Tea");
-//        assertThat(teaProducts).hasSize(2);
-//        assertThat(teaProducts.get(0).getName()).isEqualTo("Black Tea");
-//        assertThat(teaProducts.get(1).getName()).isEqualTo("Green Tea");
-//    }
+    @Test
+    void testGetCategorizedProductsSorted_returnsOnlyVisibleCategoriesAndVisibleProductsSorted() {
+        Category visibleCat1 = categoryRepository.save(Category.builder().name("Мёд").visible(true).showcaseOrder(1).build());
+        Category visibleCat2 = categoryRepository.save(Category.builder().name("Пыльца").visible(true).showcaseOrder(2).build());
+        Category invisibleCat = categoryRepository.save(Category.builder().name("Прополис").visible(false).showcaseOrder(3).build());
 
-    private Product createValidProduct(String name, BigDecimal price, Category category) {
+        productRepository.save(createProduct("Продукт B", visibleCat1, 2));
+        productRepository.save(createProduct("Продукт A", visibleCat1, 1));
+        productRepository.save(createProduct("Продукт X", visibleCat2, 1));
+        productRepository.save(createProduct("Скрытый продукт", visibleCat1, 3, false));
+        productRepository.save(createProduct("Невидимый продукт", invisibleCat, 1));
+
+        Map<String, List<Product>> result = mainPageService.getCategorizedProductsSorted();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.keySet()).containsExactly("Мёд", "Пыльца");
+
+        List<Product> honeyProducts = result.get("Мёд");
+        assertThat(honeyProducts).hasSize(2);
+        assertThat(honeyProducts).extracting(Product::getName).containsExactly("Продукт A", "Продукт B");
+
+        List<Product> pollenProducts = result.get("Пыльца");
+        assertThat(pollenProducts).hasSize(1);
+        assertThat(pollenProducts.get(0).getName()).isEqualTo("Продукт X");
+    }
+
+    private Product createProduct(String name, Category category, int showcaseOrder) {
+        return createProduct(name, category, showcaseOrder, true);
+    }
+
+    private Product createProduct(String name, Category category, int showcaseOrder, boolean showInShowcase) {
         return Product.builder()
                 .name(name)
-                .shortDescription("Short " + name)
-                .description("Full description of " + name)
-                .images(singletonList("http://image.url/" + name.replace(" ", "_")))
-                .price(price)
+                .shortDescription("Кратко")
+                .description("Описание")
+                .price(new BigDecimal("100.00"))
                 .length(10.0)
                 .width(5.0)
-                .height(3.0)
-                .weight(1.5)
+                .height(2.0)
+                .weight(1.0)
                 .stockQuantity(10)
+                .images(List.of("img1.jpg"))
                 .category(category)
+                .showcaseOrder(showcaseOrder)
+                .showInShowcase(showInShowcase)
                 .build();
     }
 }

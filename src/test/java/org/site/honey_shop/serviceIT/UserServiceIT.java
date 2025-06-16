@@ -3,19 +3,22 @@ package org.site.honey_shop.serviceIT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.site.honey_shop.TestContainerConfig;
+import org.site.honey_shop.dto.UserResponseDTO;
 import org.site.honey_shop.entity.Role;
 import org.site.honey_shop.entity.User;
 import org.site.honey_shop.repository.UserRepository;
 import org.site.honey_shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.List;
+
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -70,17 +73,19 @@ class UserServiceIT extends TestContainerConfig {
         assertThat(userDto.username()).isEqualTo("testuser");
     }
 
-//    @Test
-//    void testFindAllUsers() {
-//        userService.save(buildSampleUser(), null);
-//        User another = buildSampleUser();
-//        another.setUsername("user2");
-//        userService.save(another, null);
-//
-//        List<?> users = userService.findAll();
-//
-//        assertThat(users).hasSize(2);
-//    }
+    @Test
+    void testFindAllUsers() {
+        userService.save(buildSampleUser(), null);
+        User another = buildSampleUser();
+        another.setUsername("user2");
+        userService.save(another, null);
+
+        Page<UserResponseDTO> users = userService.findAll(PageRequest.of(0, 10));
+
+        assertThat(users).hasSize(2);
+        assertThat(users).isNotNull();
+        assertThat(users.getContent()).isNotEmpty();
+    }
 
     @Test
     void testRemoveImageFromUserProfile_success() {

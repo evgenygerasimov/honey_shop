@@ -17,6 +17,7 @@ import org.site.honey_shop.exception.ImageUploadException;
 import org.site.honey_shop.exception.MyAuthenticationException;
 import org.site.honey_shop.mapper.ShopMapper;
 import org.site.honey_shop.repository.UserRepository;
+import org.springframework.data.domain.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -110,16 +111,22 @@ class UserServiceTest {
         assertEquals("testuser", result.username());
     }
 
-//    @Test
-//    void findAll_shouldReturnListOfDtos() {
-//        List<User> users = List.of(user);
-//        when(userRepository.findAll()).thenReturn(users);
-//        when(shopMapper.toUserDto(user)).thenReturn(userDto);
-//
-//        List<UserResponseDTO> result = userService.findAll();
-//
-//        assertEquals(1, result.size());
-//    }
+    @Test
+    void findAll_shouldReturnListOfDto() {
+        List<User> users = List.of(user);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("updateDate").descending());
+        Page<User> page = new PageImpl<>(users, pageable, users.size());
+
+        when(userRepository.findAll(pageable)).thenReturn(page);
+        when(shopMapper.toUserDto(user)).thenReturn(userDto);
+
+        Page<UserResponseDTO> result = userService.findAll(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(userDto, result.getContent().get(0));
+    }
+
 
     @Test
     void save_shouldSaveUserWithImage() {

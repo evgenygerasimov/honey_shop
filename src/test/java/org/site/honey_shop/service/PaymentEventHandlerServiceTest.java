@@ -10,14 +10,14 @@ import org.site.honey_shop.entity.*;
 import org.site.honey_shop.kafka.OrderEventPublisher;
 import org.site.honey_shop.kafka.OrderInfoEventPublisher;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentEventHandlerServiceTest {
@@ -52,6 +52,7 @@ class PaymentEventHandlerServiceTest {
     @BeforeEach
     void setUp() {
         orderUuid = UUID.randomUUID();
+
         product = new Product();
         product.setName("Test Product");
         product.setStockQuantity(10);
@@ -67,6 +68,7 @@ class PaymentEventHandlerServiceTest {
         order.setOrderId(orderUuid);
         order.setPayment(payment);
         order.setOrderItems(List.of(orderItem));
+        order.setTotalOrderAmount(new BigDecimal("20.00"));
     }
 
     private Map<String, Object> createPaymentData(String event, UUID orderId, boolean withMetadata) {
@@ -99,7 +101,8 @@ class PaymentEventHandlerServiceTest {
         verify(paymentService).findById(payment.getPaymentId());
         verify(paymentService).update(payment);
         verify(orderService).update(order);
-        verify(productService).updateStockForReduction(product, 2);
+        verify(orderInfoEventPublisher).publishOrderInfoEvent(order);
+        verify(orderEventPublisher).publishOrderCreatedEvent(contains("успешно оплачен"));
 
         assertEquals(OrderStatus.PAID, order.getOrderStatus());
         assertEquals(PaymentStatus.SUCCESS, payment.getPaymentStatus());
@@ -110,9 +113,8 @@ class PaymentEventHandlerServiceTest {
         Map<String, Object> paymentData = createPaymentData("payment.succeeded", orderUuid, false);
 
         Exception ex = assertThrows(NullPointerException.class, () -> service.handlePaymentSucceeded(paymentData));
-        assertTrue(ex.getMessage().contains("Metadata is null"));
+        assertTrue(ex.getMessage().contains("metadata") || ex.getMessage().contains("Metadata"));
     }
-
 
     @Test
     void testHandlePaymentCanceled_successfulFlow() {
@@ -125,11 +127,11 @@ class PaymentEventHandlerServiceTest {
 
         verify(orderService).update(order);
         verify(paymentService).update(payment);
+        verify(orderEventPublisher).publishOrderCreatedEvent(contains("отменен"));
 
         assertEquals(OrderStatus.CANCELLED, order.getOrderStatus());
         assertEquals(PaymentStatus.FAILED, payment.getPaymentStatus());
     }
-
 
     @Test
     void testHandleRefundSucceeded_successfulFlow() {

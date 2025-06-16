@@ -13,6 +13,8 @@ import org.site.honey_shop.service.CategoryService;
 import org.site.honey_shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,13 +45,22 @@ class ProductServiceIT extends TestContainerConfig {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private Category honeyCategory;
+    private Category category;
 
     @BeforeEach
     void setUp() {
         productRepository.deleteAll();
         categoryRepository.deleteAll();
-        honeyCategory = categoryService.saveCategoryByName("Мёд");
+
+        MockMultipartFile image = new MockMultipartFile(
+                "image", "honey.jpg", "image/jpeg", "some-image-data".getBytes());
+
+        category = Category.builder()
+                .name("Пыльца")
+                .visible(true)
+                .build();
+
+        categoryService.saveCategoryWithImage(category, image);
     }
 
     private Product buildSampleProduct() {
@@ -63,16 +74,11 @@ class ProductServiceIT extends TestContainerConfig {
                 .height(3.0)
                 .weight(0.5)
                 .images(new java.util.ArrayList<>())
-                .category(honeyCategory)
+                .category(category)
                 .stockQuantity(100)
                 .build();
     }
 
-    private Category buildSampleCategory() {
-        return Category.builder()
-               .name("Мёд")
-                .build();
-    }
 
     @Test
     @Transactional
@@ -111,24 +117,24 @@ class ProductServiceIT extends TestContainerConfig {
                 .hasMessageContaining("Product not found");
     }
 
-//    @Test
-//    void testGetAllProducts_sortedByPriceAndGrouped() {
-//        Product p1 = buildSampleProduct();
-//        p1.setPrice(new BigDecimal("15.00"));
-//        Product p2 = buildSampleProduct();
-//        p2.setName("Продукт 2");
-//        p2.setPrice(new BigDecimal("5.00"));
-//
-//        MockMultipartFile image1 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
-//        productService.createProduct(p1, List.of(image1), "0");
-//        MockMultipartFile image2 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
-//        productService.createProduct(p2, List.of(image2), "0");
-//
-//        List<Product> products = productService.getAllProducts();
-//
-//        assertThat(products).hasSize(2);
-//        assertThat(products.getFirst().getPrice()).isEqualByComparingTo("15.00");
-//    }
+    @Test
+    void testGetAllProducts_sortedByPriceAndGrouped() {
+        Product p1 = buildSampleProduct();
+        p1.setPrice(new BigDecimal("15.00"));
+        Product p2 = buildSampleProduct();
+        p2.setName("Продукт 2");
+        p2.setPrice(new BigDecimal("5.00"));
+
+        MockMultipartFile image1 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
+        productService.createProduct(p1, List.of(image1), "0");
+        MockMultipartFile image2 = new MockMultipartFile("image", "image.jpg", "image/jpeg", "test image".getBytes(StandardCharsets.UTF_8));
+        productService.createProduct(p2, List.of(image2), "0");
+
+        Page<Product> page = productService.getAllProducts(PageRequest.of(0, 10));
+
+        assertThat(page).isNotNull();
+        assertThat(page.getContent()).isNotEmpty();
+    }
 
     @Test
     void testUpdateProduct_success() {
