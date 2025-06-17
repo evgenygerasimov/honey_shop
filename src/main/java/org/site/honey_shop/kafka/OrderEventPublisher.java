@@ -13,5 +13,4 @@ public class OrderEventPublisher {
     public void publishOrderCreatedEvent(String message) {
         kafkaTemplate.send("order.created", message);
     }
-
 }

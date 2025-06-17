@@ -56,7 +56,8 @@
 
         <div class="mb-3">
             <label for="customerPhone" class="form-label">Телефон</label>
-            <input type="text" id="customerPhone" name="customerPhone" class="form-control" th:field="*{customerPhone}" required>
+            <input type="text" id="customerPhone" name="customerPhone" class="form-control" th:field="*{customerPhone}"
+                   required>
         </div>
         <div th:if="${#fields.hasErrors('customerPhone')}" class="alert alert-danger" role="alert">
             <span th:text="${#fields.errors('customerPhone')[0]}"></span>
@@ -101,7 +102,8 @@
         </div>
 
         <div class="mb-3 mt-4">
-            <button type="submit" id="checkout-btn" class="btn btn-success" style="color: white;">Перейти к оплате</button>
+            <button type="submit" id="checkout-btn" class="btn btn-success" style="color: white;">Перейти к оплате
+            </button>
         </div>
     </form>
 </div>

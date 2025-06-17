@@ -1,9 +1,7 @@
 package org.site.honey_shop.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +12,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "tokens")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Token {
 
     @Id
