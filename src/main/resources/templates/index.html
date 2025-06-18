@@ -52,23 +52,32 @@
 
 <div id="catalog">
     <section class="text-center bg-light features-icons" style="margin-bottom: 150px;">
-        <div class="container"><h1>Каталог</h1></div>
         <div class="container">
-            <div class="card-group" style="border-radius: 0; border-width: 0;">
-                <div th:each="category : ${categories}" class="card" style="border-width: 0;">
-                    <img th:src="@{'/app/uploads/img/' + ${#strings.substring(category.imageUrl, category.imageUrl.lastIndexOf('/') + 1)}}"
-                         alt="Фото категории" class="card-img-top w-100 d-block" width="100">
-                    <div class="card-body text-center">
-                        <a class="btn btn-primary link-dark" th:href="'#' + ${category.name}"
-                           style="color: var(--bs-body-bg); background: rgba(0,123,255,0); border-style: none;">
-                            <h2 th:text="${category.name}">Категория</h2>
-                        </a>
+            <h1>Каталог</h1>
+        </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div th:each="category : ${categories}" class="col-sm-8 col-md-6 col-lg-4 mb-4 d-flex justify-content-center">
+                    <div class="card" style="width: 100%; max-width: 350px; border-width: 0;">
+                        <img th:src="@{'/app/uploads/img/' + ${#strings.substring(category.imageUrl, category.imageUrl.lastIndexOf('/') + 1)}}"
+                             alt="Фото категории"
+                             class="card-img-top"
+                             style="height: 400px; object-fit: contain;">
+                        <div class="card-body text-center">
+                            <a class="btn btn-primary link-dark"
+                               th:href="'#' + ${category.name}"
+                               style="color: var(--bs-body-bg); background: rgba(0,123,255,0); border-style: none;">
+                                <h2 th:text="${category.name}">Категория</h2>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </div>
+
+
 
 <section style="margin-bottom: 150px;" th:each="entry : ${categorizedProducts}" th:attr="id=${entry.key}">
     <div class="container">
@@ -143,40 +152,184 @@
                     <div class="carousel-item active">
                         <div class="d-flex flex-column align-items-center text-center p-4">
                             <div class="card"><img class="card-img w-100 d-block"
-                                                   src="/assets/img/man.png"
-                                                   width="210"
-                                                   height="280">
-                            </div>
-                            <p class="fs-5 fst-italic">"Отличный магазин! Быстрая доставка и хорошее качество
-                                товаров."</p>
-                            <h5 class="fw-bold">Иван Иванов</h5>
-                            <p class="text-warning">⭐⭐⭐⭐⭐</p>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <div class="d-flex flex-column align-items-center text-center p-4">
-                            <div class="card"><img class="card-img w-100 d-block"
                                                    src="/assets/img/woman.png"
                                                    width="210"
                                                    height="280">
                             </div>
-                            <p class="fs-5 fst-italic">"Товар полностью соответствует описанию. Рекомендую!"</p>
-                            <h5 class="fw-bold">Мария Петрова</h5>
-                            <p class="text-warning">⭐⭐⭐⭐⭐</p>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед гречишный 3л/4,3кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> Мёд с Большой Буквы М!<br><br>
+                                <strong>Недостатки:</strong> Нет!<br><br>
+
+                                <strong>Комментарий:</strong> Мёд ОТЛИЧНЫЙ! Очень вкусный!<br>
+                                Самый Настоящий! Заказали ещё разнотравие. Спасибо за мёд!<br>
+                                И, отдельное спасибо, за упаковку "с любовью"!
+                            </p>
+                            <h5 class="fw-bold mt-3">Евгения Р.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
                         </div>
                     </div>
 
                     <div class="carousel-item">
                         <div class="d-flex flex-column align-items-center text-center p-4">
-                            <div class="card"><img class="card-img w-100 d-block"
-                                                   src="/assets/img/man.png"
-                                                   width="210"
-                                                   height="280">
+                            <div class="card">
+                                <img class="card-img w-100 d-block"
+                                     src="/assets/img/man.png"
+                                     width="210"
+                                     height="280">
                             </div>
-                            <p class="fs-5 fst-italic">"Приятный сервис, но доставка немного задержалась."</p>
-                            <h5 class="fw-bold">Алексей Сидоров</h5>
-                            <p class="text-warning">⭐⭐⭐⭐⭐</p>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед гречишный 0,5л/0,7кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> Мед натуральный, приятно, что в стеклянной банке<br><br>
+                                <strong>Недостатки:</strong> Особых не заметил<br><br>
+
+                                <strong>Комментарий:</strong> Вкусный гречишный ароматный мед.<br>
+                                Купили 1 литр, распробовав, заказали 3.<br>
+                                Рекомендую однозначно тем, кто любитель гречишного
+                            </p>
+                            <h5 class="fw-bold mt-3">Айрат М.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card">
+                                <img class="card-img w-100 d-block"
+                                     src="/assets/img/woman.png"
+                                     width="210"
+                                     height="280">
+                            </div>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед гречишный 0,95л/1,4кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> Вкусный, бережно упакован.<br><br>
+                                <strong>Недостатки:</strong> Нет<br><br>
+
+                                <strong>Комментарий:</strong> Мед приехал чуть жидкий,<br>
+                                сейчас уже засахаривается. По вкусу очень приятный.<br>
+                                Я правда ожидала больше горечи, так как люблю такой привкус.<br>
+                                Но этот то же очень вкусный, не приторный.<br>
+                                По поводу натуральности, я не специалист, но думаю что мед настоящий.<br>
+                                К покупке, рекомендую.
+                            </p>
+                            <h5 class="fw-bold mt-3">Татьяна К.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card">
+                                <img class="card-img w-100 d-block"
+                                     src="/assets/img/woman.png"
+                                     width="210"
+                                     height="280">
+                            </div>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед гречишный 3л/4,3кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> моё почтение такому настоящему мёду<br><br>
+                                <strong>Недостатки:</strong> нет и быть не может<br><br>
+
+                                <strong>Комментарий:</strong> имеется желание заказать ещё и мёд "разнотравье"
+                            </p>
+                            <h5 class="fw-bold mt-3">Лилия Л.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card">
+                                <img class="card-img w-100 d-block"
+                                     src="/assets/img/man.png"
+                                     width="210"
+                                     height="280">
+                            </div>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед разнотравье 0,95л/1,4кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> Ооочень вкусно))) Натуральный мед.<br><br>
+                                <strong>Недостатки:</strong> Нет<br><br>
+
+                                <strong>Комментарий:</strong> Натуральный вкусный мед.<br>
+                                Заказывал у многих разных производителей,<br>
+                                этот оказался самым самым. Однозначно рекомендую
+                            </p>
+                            <h5 class="fw-bold mt-3">Евгений У.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card">
+                                <img class="card-img w-100 d-block"
+                                     src="/assets/img/man.png"
+                                     width="210"
+                                     height="280">
+                            </div>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед разнотравье 3л/4,3кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> Реально натуральный, такой еще не попадался.<br><br>
+                                <strong>Недостатки:</strong> Нет<br><br>
+
+                                <strong>Комментарий:</strong> Получил 3 банки, решил заказать еще 3
+                            </p>
+                            <h5 class="fw-bold mt-3">Олег Г.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card">
+                                <img class="card-img w-100 d-block"
+                                     src="/assets/img/man.png"
+                                     width="210"
+                                     height="280">
+                            </div>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед разнотравье 3л/4,3кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> Натуральный мёд<br><br>
+                                <strong>Недостатки:</strong> Не выявлено<br><br>
+
+                                <strong>Комментарий:</strong> Консистенция, вид, запах, вкус - замечательны)<br>
+                                Упаковка - выше всяких похвал, практично, добротно, функционально.<br>
+                                Спасибо за труд и отличный продукт) Успехов в делах!
+                            </p>
+                            <h5 class="fw-bold mt-3">Линар Г.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="d-flex flex-column align-items-center text-center p-4">
+                            <div class="card">
+                                <img class="card-img w-100 d-block"
+                                     src="/assets/img/woman.png"
+                                     width="210"
+                                     height="280">
+                            </div>
+                            <p class="fs-5 fst-italic text-start mt-3">
+                                <strong>Отзыв с маркетплейса на мед разнотравье 3л/4,3кг</strong><br><br>
+
+                                <strong>Достоинства:</strong> Аромат и вкус<br><br>
+                                <strong>Недостатки:</strong> Маловато меда взяла<br><br>
+
+                                <strong>Комментарий:</strong> Очень достойный мёд.<br>
+                                Взяла словно кота в мешке и не пожалела.<br>
+                                Упаковка более чем достаточная — баночка приехала в целости.<br>
+                                Аромат меда, как из детства. К рукам не липнет, в тёплой воде не растворяется.<br>
+                                Спасибо за ваш труд!
+                            </p>
+                            <h5 class="fw-bold mt-3">Анастасия Г.</h5>
+                            <p class="text-warning mb-0">⭐⭐⭐⭐⭐</p>
                         </div>
                     </div>
                 </div>
@@ -393,7 +546,7 @@
 
                 <div class="col-12">
                     <a href="/assets/img/photo_2023-11-11_15-56-12.jpg" class="glightbox" data-gallery="gallery1">
-                        <img class="card-img w-100 d-block" src="/assets/img/photo_2023-11-11_15-56-12.jpg">
+                        <img class="card-img w-100 d-block" src="/assets/img/photo_2023-11-11_15-56-12(old).jpg">
                     </a>
                 </div>
 

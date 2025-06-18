@@ -81,6 +81,7 @@ public class Product {
     private Category category;
 
     @Column(name = "show_in_showcase", nullable = false)
+    @Builder.Default
     private boolean showInShowcase = false;
 
     @Column(name = "showcase_order")
