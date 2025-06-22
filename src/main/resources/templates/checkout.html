@@ -28,7 +28,7 @@
 </nav>
 
 <div class="container mt-5">
-    <h2>Оформление заказа</h2>
+    <h2 style="color: rgba(0, 0, 0, 0.7);">Оформление заказа</h2>
     <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
         <span th:text="${errorMessage}">Ошибка</span>
     </div>
@@ -85,7 +85,7 @@
             Оплата производится через сервис онлайн платежей Ю-Касса. Доступна только предоплата.
         </div>
 
-        <h4 class="text mt-4">Выбор способа доставки</h4>
+        <h4 style="color: rgba(0, 0, 0, 0.7);" class="text mt-4">Выбор способа доставки</h4>
         <div id="cdek-map" style="width:800px;height:600px;"></div>
 
         <p>Стоимость товаров: <span id="product-total">0</span> руб.</p>

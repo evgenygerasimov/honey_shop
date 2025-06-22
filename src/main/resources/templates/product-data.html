@@ -2,17 +2,19 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{header-fragment :: common-head('О товаре')}"></th:block>
 <body>
-<div class="container my-5">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">В магазин</a>
-            <div class="ml-auto">
-                <a href="/cart" class="btn btn-outline-primary" id="cart-button">
-                    <i class="bi bi-cart"></i> Корзина (<span id="cart-count">0</span>) — <span id="cart-total">0</span> ₽
-                </a>
-            </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-door-open"></i> В магазин...
+        </a>
+        <div class="ml-auto">
+            <a href="/cart" class="btn btn-outline-primary" id="cart-button">
+                <i class="bi bi-cart"></i> Корзина (<span id="cart-count">0</span>) — <span id="cart-total">0</span> ₽
+            </a>
         </div>
-    </nav>
+    </div>
+</nav>
+<div class="container my-5">
     <div class="row">
         <div class="col-md-6">
             <div id="productImages" class="carousel slide" data-bs-ride="carousel">
@@ -24,11 +26,13 @@
                         </div>
                     </th:block>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#productImages" data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#productImages"
+                        data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Предыдущий</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#productImages" data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#productImages"
+                        data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Следующий</span>
                 </button>
@@ -36,13 +40,14 @@
         </div>
 
         <div class="col-md-6">
-            <h2 th:text="${product.name}">Product Name</h2>
-            <p th:text="${product.description}" style="white-space: pre-line;"></p>
-            <span class="product-price" th:text="'Цена: ' + ${product.price}">Price</span>
+            <h2 style="color: rgba(0, 0, 0, 0.7);" th:text="${product.name}">Product Name</h2>
+            <p th:text="${product.description}" style="white-space: pre-line; color: rgba(0, 0, 0, 0.7);"></p>
+            <span class="product-price" style="color: rgba(0, 0, 0, 0.7);" th:text="'Цена: ' + ${product.price}">Price</span>
 
             <div class="d-flex align-items-center my-3">
                 <button class="btn btn-outline-secondary" id="decreaseBtn" type="button">-</button>
-                <input id="quantityInput" type="number" class="form-control mx-2" value="1" min="1" max="100" step="1" style="width: 70px;">
+                <input id="quantityInput" type="number" class="form-control mx-2" value="1" min="1" max="100" step="1"
+                       style="width: 70px;">
                 <button class="btn btn-outline-secondary" id="increaseBtn" type="button">+</button>
             </div>
 

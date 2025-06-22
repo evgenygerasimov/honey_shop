@@ -87,7 +87,6 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         return http.build();
     }
 
-
     @Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource) {
         return new JdbcUserDetailsManager(dataSource);
