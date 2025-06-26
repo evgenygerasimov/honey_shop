@@ -1,8 +1,10 @@
 package org.site.honey_shop.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.site.honey_shop.service.CdekCacheService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,10 +20,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/cdek")
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public class CdekController {
 
     private final CdekCacheService cdekCacheService;
+
+    @Value("${cdek.cache.base-url}")
+    private String baseUrl;
 
     @GetMapping("/offices")
     public ResponseEntity<String> getOffices(@RequestParam Map<String, String> params) {
@@ -34,7 +40,7 @@ public class CdekController {
     @PostMapping("/offices")
     public ResponseEntity<byte[]> proxyPostToService(@RequestBody(required = false) byte[] body,
                                                      HttpServletRequest request) throws IOException {
-        URL url = new URL("http://lamp-server/service.php");
+        URL url = new URL(baseUrl);
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoOutput(true);

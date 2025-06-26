@@ -167,6 +167,9 @@
                             th:selected="${category.name == product.category.name}"></option>
                 </select>
             </div>
+            <div th:if="${#fields.hasErrors('category')}" class="alert alert-danger" role="alert">
+                <span th:text="${#fields.errors('category')[0]}"></span>
+            </div>
 
             <div class="mb-3">
                 <label for="visible" class="form-label">Видимость на главной странице:</label>

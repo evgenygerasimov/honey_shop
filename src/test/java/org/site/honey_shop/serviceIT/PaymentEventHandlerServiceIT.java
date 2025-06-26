@@ -171,8 +171,6 @@ class PaymentEventHandlerServiceIT extends TestContainerConfig {
                 .hasMessageContaining("Order UUID is missing");
     }
 
-    // --- Вспомогательные методы ---
-
     private Order createSampleOrder() {
         return Order.builder()
                 .firstName("Иван")

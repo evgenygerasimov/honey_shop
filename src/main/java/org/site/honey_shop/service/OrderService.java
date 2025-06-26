@@ -67,6 +67,7 @@ public class OrderService {
                 .deliveryType(order.getDeliveryType())
                 .orderStatus(OrderStatus.PENDING)
                 .paymentStatus(PaymentStatus.PENDING)
+                .personalDataConsent(order.isPersonalDataConsent())
                 .payment(order.getPayment())
                 .build();
         Payment payment = Payment.builder()

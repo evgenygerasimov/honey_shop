@@ -1,6 +1,7 @@
 package org.site.honey_shop.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -77,6 +78,8 @@ public class Product {
     private Integer stockQuantity;
 
     @ManyToOne
+    @Valid
+    @NotNull(message = "Создайте категорию или выберите из списка.")
     @JoinColumn(name = "category_id")
     private Category category;
 

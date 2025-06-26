@@ -130,7 +130,6 @@ class CdekCacheServiceTest {
 
     @Test
     void testScheduledRefreshWithTimeout_success() throws Exception {
-        @SuppressWarnings("unchecked")
         Future<Object> mockFuture = mock(Future.class);
 
         when(executor.submit(any(Runnable.class))).thenReturn((Future) mockFuture);

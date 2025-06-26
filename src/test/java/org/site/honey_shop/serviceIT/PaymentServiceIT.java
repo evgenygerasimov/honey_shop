@@ -51,6 +51,7 @@ class PaymentServiceIT extends TestContainerConfig {
                 .deliveryAmount(BigDecimal.valueOf(0))
                 .totalOrderAmount(BigDecimal.valueOf(10.99))
                 .orderStatus(OrderStatus.PENDING)
+                .personalDataConsent(true)
                 .paymentStatus(PaymentStatus.PENDING)
                 .deliveryType("PVZ")
                 .build();
@@ -85,6 +86,7 @@ class PaymentServiceIT extends TestContainerConfig {
                 .deliveryAmount(BigDecimal.valueOf(0))
                 .totalOrderAmount(BigDecimal.valueOf(10.99))
                 .orderStatus(OrderStatus.PENDING)
+                .personalDataConsent(true)
                 .paymentStatus(PaymentStatus.PENDING)
                 .deliveryType("PVZ")
                 .build();
@@ -115,6 +117,7 @@ class PaymentServiceIT extends TestContainerConfig {
                 .deliveryAmount(BigDecimal.valueOf(0))
                 .totalOrderAmount(BigDecimal.valueOf(10.99))
                 .orderStatus(OrderStatus.PENDING)
+                .personalDataConsent(true)
                 .paymentStatus(PaymentStatus.PENDING)
                 .deliveryType("PVZ")
                 .build();

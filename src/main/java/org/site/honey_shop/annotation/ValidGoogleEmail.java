@@ -10,6 +10,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidGoogleEmail {
+
     String message() default "Логин должен быть валидным адресом Google почты";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

@@ -88,6 +88,10 @@ public class Order {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;
 
+    @Column(name = "personal_data_consent")
+    @AssertTrue(message = "Необходимо дать согласие на обработку персональных данных")
+    private boolean personalDataConsent;
+
     @CreationTimestamp
     @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;

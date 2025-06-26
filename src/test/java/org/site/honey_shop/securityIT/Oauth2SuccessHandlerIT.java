@@ -54,7 +54,6 @@ class Oauth2SuccessHandlerIT extends TestContainerConfig {
 
     @Test
     void testOnAuthenticationSuccess_shouldSaveTokensAndRedirect() throws Exception {
-        // given
         String email = "oauthuser@example.com";
         User user = User.builder()
                 .username(email)
@@ -80,10 +79,8 @@ class Oauth2SuccessHandlerIT extends TestContainerConfig {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        // when
         successHandler.onAuthenticationSuccess(request, response, authentication);
 
-        // then
         List<Token> tokens = tokenRepository.findAll();
         assertThat(tokens).hasSize(1);
 

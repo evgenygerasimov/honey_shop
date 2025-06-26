@@ -287,6 +287,7 @@ class OrderServiceIT extends TestContainerConfig {
                 .productAmount(BigDecimal.valueOf(10.99))
                 .deliveryAmount(BigDecimal.ZERO)
                 .totalOrderAmount(BigDecimal.valueOf(10.99))
+                .personalDataConsent(true)
                 .deliveryType("PVZ")
                 .build();
     }

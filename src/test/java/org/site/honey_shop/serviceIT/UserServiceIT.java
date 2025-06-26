@@ -19,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
-
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest

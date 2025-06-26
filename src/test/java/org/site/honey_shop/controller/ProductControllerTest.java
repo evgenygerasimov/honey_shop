@@ -71,6 +71,10 @@ class ProductControllerTest {
         var authentication = new UsernamePasswordAuthenticationToken("admin", null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        Category category = new Category();
+        category.setCategoryId(UUID.randomUUID());
+        category.setName("Мёд гречишный");
+
         product = Product.builder()
                 .name("Мёд липовый")
                 .shortDescription("Натуральный липовый мёд с пасеки.")
@@ -81,7 +85,7 @@ class ProductControllerTest {
                 .height(12.0)
                 .weight(0.5)
                 .stockQuantity(20)
-                .category(new Category())
+                .category(category)
                 .build();
 
         picture = new MockMultipartFile(

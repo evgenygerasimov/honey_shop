@@ -139,6 +139,7 @@ class OrderControllerTest {
                 .deliveryAmount(BigDecimal.valueOf(100.00))
                 .productAmount(BigDecimal.valueOf(400.00))
                 .totalOrderAmount(BigDecimal.valueOf(500.00))
+                .personalDataConsent(true)
                 .deliveryType("Курьер")
                 .orderStatus(OrderStatus.PENDING)
                 .paymentStatus(PaymentStatus.PENDING)

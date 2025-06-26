@@ -13,6 +13,7 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
+
     List<Order> findByOrderStatusAndCreateDateBefore(OrderStatus orderStatus, LocalDateTime attr0);
 
     Page<Order> findAll(Pageable pageable);

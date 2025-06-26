@@ -1,6 +1,7 @@
 let selectedDeliveryCost = 0; // Переменная для хранения выбранной стоимости доставки
 
 function initCDEKWidget(totalVolume, totalWeight) {
+    console.log("вошел в инит сдек")
     new window.CDEKWidget({
         from: {
             country_code: 'RU',
