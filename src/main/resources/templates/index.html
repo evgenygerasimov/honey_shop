@@ -74,7 +74,7 @@
                              style="height: 400px; object-fit: contain;">
                         <div class="card-body text-center">
                             <a class="btn btn-primary link-dark"
-                               th:href="'#' + ${category.name}"
+                               th:href="'#' + ${#strings.replace(#strings.toLowerCase(category.name), ' ', '-')}"
                                style="color: rgba(0, 0, 0, 0.7); background: rgba(0,123,255,0); border-style: none;">
                                 <h2 style="color: rgba(0, 0, 0, 0.7);" th:text="${category.name}">Категория</h2>
                             </a>
@@ -86,7 +86,8 @@
     </section>
 </div>
 
-<section style="margin-bottom: 150px;" th:each="entry : ${categorizedProducts}" th:attr="id=${entry.key}">
+<section style="margin-bottom: 150px;" th:each="entry : ${categorizedProducts}"
+         th:attr="id=${#strings.replace(#strings.toLowerCase(entry.key), ' ', '-')}">
     <div class="container">
         <h1 class="text-center" style="margin-bottom: 8px; color: rgba(0, 0, 0, 0.7);" th:text="${entry.key}">Категория</h1>
     </div>
