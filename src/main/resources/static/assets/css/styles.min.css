@@ -403,5 +403,23 @@ h2.text-primary {
     color: white;
 }
 
+/*виджет сдек*/
+.cdek-map-responsive {
+    width: 100%;
+    height: 600px; /* или сколько тебе нужно */
+    max-width: 100%;
+    margin-bottom: 3.0rem;
+}
 
+@media (max-width: 768px) {
+    .cdek-map-responsive {
+        height: 500px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cdek-map-responsive {
+        height: 400px;
+    }
+}
 
