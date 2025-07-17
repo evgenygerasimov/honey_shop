@@ -38,7 +38,6 @@ public class JwtService {
     private String secretKey;
     private final long validityFifteenMinutes = TokenLifeTime.ACCESS_TOKEN.toMillis();
     private final long validitySevenDays = TokenLifeTime.REFRESH_TOKEN.toMillis();
-    private static final long ONE_DAY = 1000 * 60 * 60 * 24;
     private final UserService userService;
     private final ApplicationContext context;
 
@@ -144,23 +143,5 @@ public class JwtService {
         LocalDateTime expirationTime = refreshTokenObj.getCreateDate()
                 .plus(Duration.of(validitySevenDays, ChronoUnit.MILLIS));
         return expirationTime.isBefore(LocalDateTime.now()) || !refreshTokenObj.isRefreshTokenValid();
-    }
-
-    public boolean isRefreshTokenExpired(String refreshToken) {
-        Token refreshTokenObj = tokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
-        LocalDateTime expirationTime = refreshTokenObj.getCreateDate()
-                .plus(Duration.of(validitySevenDays, ChronoUnit.MILLIS));
-        return expirationTime.isBefore(LocalDateTime.now());
-    }
-
-    @Scheduled(fixedRate = ONE_DAY)
-    public void cleanExpiredTokens() {
-        List<Token> tokens = tokenRepository.findAll();
-        for (Token token : tokens) {
-            if (isRefreshTokenExpired(token.getRefreshToken())) {
-                tokenRepository.delete(token);
-            }
-        }
     }
 }
