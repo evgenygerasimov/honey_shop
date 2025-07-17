@@ -6,6 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 </head>
 <body>
+<button onclick="scrollToTop()" id="scrollTopBtn">↑ Наверх</button>
 <nav class="navbar navbar-expand-md bg-body py-3">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#store">
@@ -68,10 +69,12 @@
             <div class="row justify-content-center">
                 <div th:each="category : ${categories}" class="col-sm-8 col-md-6 col-lg-4 mb-4 d-flex justify-content-center">
                     <div class="card" style="width: 100%; max-width: 350px; border-width: 0;">
+                        <a th:href="'#' + ${#strings.replace(#strings.toLowerCase(category.name), ' ', '-')}">
                         <img th:src="@{'/app/uploads/img/' + ${#strings.substring(category.imageUrl, category.imageUrl.lastIndexOf('/') + 1)}}"
                              alt="Фото категории"
                              class="card-img-top"
                              style="height: 400px; object-fit: contain;">
+                        </a>
                         <div class="card-body text-center">
                             <a class="btn btn-primary link-dark"
                                th:href="'#' + ${#strings.replace(#strings.toLowerCase(category.name), ' ', '-')}"
@@ -746,5 +749,6 @@
 <script src="/assets/bootstrap/js/show-send-email-notification.js"></script>
 <script src="/assets/bootstrap/js/validation-form-for-index.js"></script>
 <script src="/assets/bootstrap/js/glightbox-activation.js"></script>
+<script src="/assets/bootstrap/js/scroll-top-button.js"></script>
 </body>
 </html>

@@ -84,6 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             setCookie(response, "refresh_token", newToken.getRefreshToken());
                         } else {
                             SecurityContextHolder.clearContext();
+                            clearAuthCookies(response);
                             redirectToLogin(response);
                             return;
                         }
@@ -136,5 +137,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void redirectToLogin(HttpServletResponse response) throws Exception {
         response.sendRedirect("/auth/login");
+    }
+
+    private void clearAuthCookies(HttpServletResponse response) {
+        Cookie accessTokenCookie = new Cookie("access_token", null);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0);
+        response.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("refresh_token", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+        response.addCookie(refreshTokenCookie);
     }
 }
