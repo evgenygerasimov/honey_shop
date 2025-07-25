@@ -42,7 +42,7 @@
         <div class="col-md-6">
             <h2 style="color: rgba(0, 0, 0, 0.7);" th:text="${product.name}">Product Name</h2>
             <p th:text="${product.description}" style="white-space: pre-line; color: rgba(0, 0, 0, 0.7);"></p>
-            <span class="product-price" style="color: rgba(0, 0, 0, 0.7);" th:text="'Цена: ' + ${product.price}">Price</span>
+            <span class="product-price" style="color: rgba(0, 0, 0, 0.7);" th:text="'Цена: ' + ${product.price} + ' руб.'">Price</span>
 
             <div class="d-flex align-items-center my-3">
                 <button class="btn btn-outline-secondary" id="decreaseBtn" type="button">-</button>
