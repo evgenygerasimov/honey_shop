@@ -11,9 +11,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -59,12 +59,15 @@ public class PaymentService {
         log.info("Create confirmation url for order: {}", order.getOrderId());
         String idempotenceKey = UUID.randomUUID().toString();
 
+        Map<String, Object> receipt = getReceipt(order);
+
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("amount", Map.of("value", order.getTotalOrderAmount().toString(), "currency", "RUB"));
         requestBody.put("description", "Оплата заказа #" + order.getOrderId());
         requestBody.put("capture", true);
         requestBody.put("confirmation", Map.of("type", "redirect", "return_url", "https://localhost:8443/"));
         requestBody.put("metadata", Map.of("sessionId", session.getId()));
+        requestBody.put("receipt", receipt);
         log.info("Request body constructed: {}", requestBody);
 
         HttpHeaders headers = new HttpHeaders();
@@ -91,5 +94,49 @@ public class PaymentService {
             log.error("Confirmation url not found in response for order: {}.", order.getOrderId(), e);
             throw new RuntimeException("Error while parsing confirmation_url", e);
         }
+    }
+
+    private Map<String, Object> getReceipt(Order order) {
+        List<Map<String, Object>> items = new ArrayList<>();
+
+        for (OrderItem item : order.getOrderItems()) {
+            Map<String, Object> productItem = Map.of(
+                    "description", item.getProduct().getName(),
+                    "quantity", item.getQuantity(),
+                    "amount", Map.of(
+                            "value", item.getPricePerUnit()
+                                    .multiply(BigDecimal.valueOf(item.getQuantity()))
+                                    .setScale(2, RoundingMode.HALF_UP)
+                                    .toPlainString(),
+                            "currency", "RUB"
+                    ),
+                    "vat_code", 1,
+                    "payment_subject", "commodity",
+                    "payment_mode", "full_prepayment"
+            );
+            items.add(productItem);
+        }
+
+        BigDecimal deliveryPrice = order.getDeliveryAmount(); // = 330.00 например
+        if (deliveryPrice != null && deliveryPrice.compareTo(BigDecimal.ZERO) > 0) {
+            Map<String, Object> deliveryItem = Map.of(
+                    "description", "Доставка",
+                    "quantity", 1,
+                    "amount", Map.of(
+                            "value", deliveryPrice.setScale(2, RoundingMode.HALF_UP).toPlainString(),
+                            "currency", "RUB"
+                    ),
+                    "vat_code", 1,
+                    "payment_subject", "service",
+                    "payment_mode", "full_prepayment"
+            );
+            items.add(deliveryItem);
+        }
+
+        Map<String, Object> receipt = new HashMap<>();
+        Map<String, Object> customer = Map.of("email", order.getCustomerEmail());
+        receipt.put("customer", customer);
+        receipt.put("items", items);
+        return receipt;
     }
 }

@@ -9,9 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.site.honey_shop.entity.Order;
-import org.site.honey_shop.entity.Payment;
-import org.site.honey_shop.entity.PaymentStatus;
+import org.site.honey_shop.entity.*;
 import org.site.honey_shop.repository.PaymentRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -20,10 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -118,11 +113,7 @@ class PaymentServiceTest {
 
     @Test
     void testCreateConfirmationUrl_Success() throws Exception {
-        UUID orderId = UUID.randomUUID();
-        Order order = Order.builder()
-                .orderId(orderId)
-                .totalOrderAmount(BigDecimal.valueOf(1000))
-                .build();
+        Order order = getOrder();
 
         when(session.getId()).thenReturn("session-123");
 
@@ -143,11 +134,7 @@ class PaymentServiceTest {
 
     @Test
     void testCreateConfirmationUrl_NoConfirmationInResponse() throws Exception {
-        UUID orderId = UUID.randomUUID();
-        Order order = Order.builder()
-                .orderId(orderId)
-                .totalOrderAmount(BigDecimal.valueOf(1000))
-                .build();
+        Order order = getOrder();
 
         when(session.getId()).thenReturn("session-123");
 
@@ -162,5 +149,42 @@ class PaymentServiceTest {
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> paymentService.createConfirmationUrl(order));
         assertThat(exception.getMessage()).contains("Error while parsing confirmation_url");
+    }
+
+    private Order getOrder() {
+        UUID orderId = UUID.randomUUID();
+        Category category = Category.builder().name("Honey").build();
+
+        Product product = Product.builder()
+                .name("Test")
+                .description("desc")
+                .shortDescription("short")
+                .price(new BigDecimal(100))
+                .length(10.0)
+                .width(10.0)
+                .height(10.0)
+                .weight(500.0)
+                .stockQuantity(10)
+                .category(category)
+                .images(new ArrayList<>())
+                .build();
+
+        OrderItem orderItem = OrderItem.builder()
+                .orderItemId(UUID.randomUUID())
+                .product(product)
+                .quantity(1)
+                .pricePerUnit(BigDecimal.valueOf(100))
+                .build();
+
+        Order order = Order.builder()
+                .orderId(orderId)
+                .totalOrderAmount(BigDecimal.valueOf(1000))
+                .deliveryAmount(BigDecimal.valueOf(330))
+                .customerEmail("test@test.test")
+                .orderItems(List.of(orderItem))
+                .build();
+
+        orderItem.setOrder(order);
+        return order;
     }
 }
